@@ -54,7 +54,9 @@ reg [ 3: 0 ] score1;
 reg [ 3: 0 ] score2;
 reg add_flag;
 reg item_flag;
-reg [ 1: 0 ] HP1, HP2;
+reg [ 1: 0 ] HP1_value, HP2_value;
+reg mytank1_state_last, mytank2_state_last;
+
 initial begin
     gameover_infinity <= 0;
     cnt <= 0;
@@ -64,34 +66,54 @@ initial begin
     score2 <= 0;
     add_flag <= 0;
     item_flag <= 0;
-    HP1 <= 2;
-    HP2 <= 2;
+    HP1_value <= 2;
+    HP2_value <= 2;
 end
 
-
-always @( negedge mytank1_state ) begin
-    if ( item_invincible == 0 ) begin
-        HP1 <= HP1 - 1;
+always @( posedge clk ) begin
+    if ( ~item_invincible && mytank1_state_last && ~mytank1_state ) begin
+        HP1_value <= HP1_value - 1;
     end
     else begin
-        HP1 <= HP1;
+        HP1_value <= HP1_value;
     end
-    if ( enable_game_infinity == 1'b0 ) begin
-        HP1 <= 2;
-    end
-end
-
-always @( negedge mytank2_state ) begin
-    if ( item_invincible == 0 ) begin
-        HP2 <= HP2 - 1;
+    if ( ~item_invincible && mytank2_state_last && ~mytank2_state ) begin
+        HP2_value <= HP2_value - 1;
     end
     else begin
-        HP2 <= HP2;
+        HP2_value <= HP2_value;
     end
     if ( enable_game_infinity == 1'b0 ) begin
-        HP2 <= 2;
+        HP1_value <= 2;
+        HP2_value <= 2;
     end
+    mytank1_state_last <= mytank1_state;
+    mytank2_state_last <= mytank2_state;
 end
+
+// always @( negedge mytank1_state ) begin
+//     if ( item_invincible == 0 ) begin
+//         HP1 <= HP1 - 1;
+//     end
+//     else begin
+//         HP1 <= HP1;
+//     end
+//     if ( enable_game_infinity == 1'b0 ) begin
+//         HP1 <= 2;
+//     end
+// end
+
+// always @( negedge mytank2_state ) begin
+//     if ( item_invincible == 0 ) begin
+//         HP2 <= HP2 - 1;
+//     end
+//     else begin
+//         HP2 <= HP2;
+//     end
+//     if ( enable_game_infinity == 1'b0 ) begin
+//         HP2 <= 2;
+//     end
+// end
 
 
 always @( posedge clk ) begin
@@ -111,14 +133,15 @@ always @( posedge clk ) begin
     end
 
     else begin
-        if ( timer == 0 || btn_stop || ( | HP1 == 0 ) || ( | HP2 == 0 ) ) begin
+        if ( timer == 0 || btn_stop || ( | HP1_value == 0 ) || ( | HP2_value == 0 ) ) begin
             timer <= 16;
             gameover_infinity <= 1;
         end
         else begin
             if ( score1 < scorea1 + scoreb1 + scorec1 + scored1 ) begin
                 if ( add_flag == 0 && timer > 0 && timer < 16 ) begin
-                    timer <= timer + 1;
+                    timer <= timer + 4;
+                    cnt <= 0;
                     add_flag = 1;
                 end
             end
@@ -127,7 +150,8 @@ always @( posedge clk ) begin
             end
             if ( score2 < scorea2 + scoreb2 + scorec2 + scored2 ) begin
                 if ( add_flag == 0 && timer > 0 && timer < 16 ) begin
-                    timer <= timer + 1;
+                    timer <= timer + 4;
+                    cnt <= 0;
                     add_flag = 1;
                 end
             end

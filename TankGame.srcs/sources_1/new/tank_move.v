@@ -11,13 +11,13 @@ input clk;
 input moving;
 input reset_n;
 input start;
-input [ 9: 0 ] init_H;
-input [ 9: 0 ] init_V;
+input [ 10: 0 ] init_H;
+input [ 10: 0 ] init_V;
 input [ 1: 0 ] tank_dir;
 input tank_en;
 input tank_move_en;
-output reg [ 9: 0 ] tank_H;
-output reg [ 9: 0 ] tank_V;
+output reg [ 10: 0 ] tank_H;
+output reg [ 10: 0 ] tank_V;
 output reg [ 2: 0 ] tank_dir_feedback;
 
 parameter HEIGHT = 480;
@@ -86,7 +86,7 @@ always @( * ) begin: state_table
         INITIAL:
             next_state = STAY;
         STAY, UP, DOWN, LEFT, RIGHT: begin
-            if ( !tank_move_en || !moving ) begin
+            if ( !tank_en || !tank_move_en || !moving ) begin
                 next_state = STAY;
             end
             else begin

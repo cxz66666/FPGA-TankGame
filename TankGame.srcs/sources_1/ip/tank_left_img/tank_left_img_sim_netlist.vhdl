@@ -3,8 +3,8 @@
 -- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
 -- Date        : Tue Dec 29 16:28:49 2020
 -- Host        : cxz666 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode funcsim
---               E:/linux/Compressed/FPGA-TankGame/TankGame.srcs/sources_1/ip/tank_left_img/tank_left_img_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim -rename_top tank_left_img -prefix
+--               tank_left_img_ tank_left_img_sim_netlist.vhdl
 -- Design      : tank_left_img
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -21,8 +21,6 @@ entity tank_left_img_blk_mem_gen_prim_wrapper_init is
     ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 9 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of tank_left_img_blk_mem_gen_prim_wrapper_init : entity is "blk_mem_gen_prim_wrapper_init";
 end tank_left_img_blk_mem_gen_prim_wrapper_init;
 
 architecture STRUCTURE of tank_left_img_blk_mem_gen_prim_wrapper_init is
@@ -182,8 +180,6 @@ entity tank_left_img_blk_mem_gen_prim_width is
     ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 9 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of tank_left_img_blk_mem_gen_prim_width : entity is "blk_mem_gen_prim_width";
 end tank_left_img_blk_mem_gen_prim_width;
 
 architecture STRUCTURE of tank_left_img_blk_mem_gen_prim_width is
@@ -207,8 +203,6 @@ entity tank_left_img_blk_mem_gen_generic_cstr is
     ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 9 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of tank_left_img_blk_mem_gen_generic_cstr : entity is "blk_mem_gen_generic_cstr";
 end tank_left_img_blk_mem_gen_generic_cstr;
 
 architecture STRUCTURE of tank_left_img_blk_mem_gen_generic_cstr is
@@ -232,8 +226,6 @@ entity tank_left_img_blk_mem_gen_top is
     ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 9 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of tank_left_img_blk_mem_gen_top : entity is "blk_mem_gen_top";
 end tank_left_img_blk_mem_gen_top;
 
 architecture STRUCTURE of tank_left_img_blk_mem_gen_top is
@@ -257,8 +249,6 @@ entity tank_left_img_blk_mem_gen_v8_4_4_synth is
     ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 9 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of tank_left_img_blk_mem_gen_v8_4_4_synth : entity is "blk_mem_gen_v8_4_4_synth";
 end tank_left_img_blk_mem_gen_v8_4_4_synth;
 
 architecture STRUCTURE of tank_left_img_blk_mem_gen_v8_4_4_synth is
@@ -491,8 +481,6 @@ entity tank_left_img_blk_mem_gen_v8_4_4 is
   attribute C_WRITE_WIDTH_B of tank_left_img_blk_mem_gen_v8_4_4 : entity is 12;
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of tank_left_img_blk_mem_gen_v8_4_4 : entity is "artix7";
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of tank_left_img_blk_mem_gen_v8_4_4 : entity is "blk_mem_gen_v8_4_4";
   attribute downgradeipidentifiedwarnings : string;
   attribute downgradeipidentifiedwarnings of tank_left_img_blk_mem_gen_v8_4_4 : entity is "yes";
 end tank_left_img_blk_mem_gen_v8_4_4;

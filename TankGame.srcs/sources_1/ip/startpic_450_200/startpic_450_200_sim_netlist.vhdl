@@ -1,10 +1,10 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
--- Date        : Tue Dec 29 20:32:03 2020
+-- Date        : Tue Dec 29 20:32:02 2020
 -- Host        : cxz666 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode funcsim
---               e:/linux/Compressed/FPGA-TankGame/TankGame.srcs/sources_1/ip/startpic_450_200/startpic_450_200_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim -rename_top startpic_450_200 -prefix
+--               startpic_450_200_ startpic_450_200_sim_netlist.vhdl
 -- Design      : startpic_450_200
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -20,8 +20,6 @@ entity startpic_450_200_bindec is
     addra : in STD_LOGIC_VECTOR ( 4 downto 0 );
     ena : in STD_LOGIC
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of startpic_450_200_bindec : entity is "bindec";
 end startpic_450_200_bindec;
 
 architecture STRUCTURE of startpic_450_200_bindec is
@@ -362,8 +360,6 @@ entity startpic_450_200_blk_mem_gen_mux is
     \douta[11]_INST_0_i_1_3\ : in STD_LOGIC_VECTOR ( 0 to 0 );
     \douta[11]_INST_0_i_1_4\ : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of startpic_450_200_blk_mem_gen_mux : entity is "blk_mem_gen_mux";
 end startpic_450_200_blk_mem_gen_mux;
 
 architecture STRUCTURE of startpic_450_200_blk_mem_gen_mux is
@@ -1615,8 +1611,6 @@ entity startpic_450_200_blk_mem_gen_prim_wrapper_init is
     \^ena\ : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 15 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of startpic_450_200_blk_mem_gen_prim_wrapper_init : entity is "blk_mem_gen_prim_wrapper_init";
 end startpic_450_200_blk_mem_gen_prim_wrapper_init;
 
 architecture STRUCTURE of startpic_450_200_blk_mem_gen_prim_wrapper_init is
@@ -9212,8 +9206,6 @@ entity startpic_450_200_blk_mem_gen_prim_width is
     \^ena\ : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 15 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of startpic_450_200_blk_mem_gen_prim_width : entity is "blk_mem_gen_prim_width";
 end startpic_450_200_blk_mem_gen_prim_width;
 
 architecture STRUCTURE of startpic_450_200_blk_mem_gen_prim_width is
@@ -10036,8 +10028,6 @@ entity startpic_450_200_blk_mem_gen_generic_cstr is
     ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 16 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of startpic_450_200_blk_mem_gen_generic_cstr : entity is "blk_mem_gen_generic_cstr";
 end startpic_450_200_blk_mem_gen_generic_cstr;
 
 architecture STRUCTURE of startpic_450_200_blk_mem_gen_generic_cstr is
@@ -10910,8 +10900,6 @@ entity startpic_450_200_blk_mem_gen_top is
     ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 16 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of startpic_450_200_blk_mem_gen_top : entity is "blk_mem_gen_top";
 end startpic_450_200_blk_mem_gen_top;
 
 architecture STRUCTURE of startpic_450_200_blk_mem_gen_top is
@@ -10935,8 +10923,6 @@ entity startpic_450_200_blk_mem_gen_v8_4_4_synth is
     ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 16 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of startpic_450_200_blk_mem_gen_v8_4_4_synth : entity is "blk_mem_gen_v8_4_4_synth";
 end startpic_450_200_blk_mem_gen_v8_4_4_synth;
 
 architecture STRUCTURE of startpic_450_200_blk_mem_gen_v8_4_4_synth is
@@ -11169,8 +11155,6 @@ entity startpic_450_200_blk_mem_gen_v8_4_4 is
   attribute C_WRITE_WIDTH_B of startpic_450_200_blk_mem_gen_v8_4_4 : entity is 12;
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of startpic_450_200_blk_mem_gen_v8_4_4 : entity is "artix7";
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of startpic_450_200_blk_mem_gen_v8_4_4 : entity is "blk_mem_gen_v8_4_4";
   attribute downgradeipidentifiedwarnings : string;
   attribute downgradeipidentifiedwarnings of startpic_450_200_blk_mem_gen_v8_4_4 : entity is "yes";
 end startpic_450_200_blk_mem_gen_v8_4_4;

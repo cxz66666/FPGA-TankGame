@@ -41,17 +41,23 @@ wire item_addtime;
 wire item_test;
 wire [ 10: 0 ] vgaH, vgaV;
 wire [ 11: 0 ] VGAData;
-wire [ 11: 0 ] tankData;
 wire [ 11: 0 ] backgroundData;
 wire [ 1 : 0 ] player1_tank_dir, player2_tank_dir;
+wire [ 1: 0 ] enermy1_tank_dir, enermy2_tank_dir, enermy3_tank_dir, enermy4_tank_dir;
 wire [ 10: 0 ] player1_tank_H, player1_tank_V, player2_tank_H, player2_tank_V;
-wire [ 11: 0 ] player1_bullet_data;
+wire [ 10: 0 ] enermy1_tank_H, enermy1_tank_V, enermy2_tank_H, enermy2_tank_V, enermy3_tank_H, enermy3_tank_V, enermy4_tank_H, enermy4_tank_V;
+wire [ 11: 0 ] player1_bullet_data, player2_bullet_data;
+wire [ 11: 0 ] enermy1_bullet_data, enermy2_bullet_data, enermy3_bullet_data, enermy4_bullet_data;
 wire [ 11: 0 ] player1_tank_data, player2_tank_data;
+wire [ 11: 0 ] enermy1_tank_data, enermy2_tank_data, enermy3_tank_data, enermy4_tank_data;
 wire [ 2: 0 ] player1_tank_dir_feedback, player2_tank_dir_feedback;
+wire [ 2: 0 ] enermy1_tank_dir_feedback, enermy2_tank_dir_feedback, enermy3_tank_dir_feedback, enermy4_tank_dir_feedback;
 wire player1_tank_en, player2_tank_en;
 wire player1_tank_en_feedback, player2_tank_en_feedback;
+wire enermy1_tank_en, enermy2_tank_en, enermy3_tank_en, enermy4_tank_en;
+wire enermy1_tank_en_feedback, enermy2_tank_en_feedback, enermy3_tank_en_feedback, enermy4_tank_en_feedback;
 wire [ 2: 0 ] player1_tank_moving_direction, player2_tank_moving_direction;
-
+wire [ 2: 0 ] enermy1_tank_moving_direction, enermy2_tank_moving_direction, enermy3_tank_moving_direction, enermy4_tank_moving_direction;
 wire reset_n;
 
 wire gameover_classic, gameover_infinity; //stop the game signal
@@ -69,8 +75,8 @@ wire enable_reward;
 
 wire	[ 3: 0 ] scorea1, scoreb1;
 wire	[ 3: 0 ] scorea2, scoreb2;
-wire	[ 3: 0 ] scorea3, scoreb3;
-wire	[ 3: 0 ] scorea4, scoreb4;
+wire	[ 3: 0 ] scorec1, scorec2;
+wire	[ 3: 0 ] scored1, scored2;
 wire [ 3: 0 ] player1_HP, player2_HP;
 
 wire [ 15: 0 ] LED_classic, LED_infinity;
@@ -100,7 +106,7 @@ game_mode u_game_mode(
               .clk( clk ),
               .btn_confirm( BTNC ),
               .btn_mode_sel( SW[ 0 ] ),
-              .btn_return( BTNU ),                                          //the under button is used for return to the game
+              .btn_return( BTNU ),                                                                                                                                                //the under button is used for return to the game
               .gameover_classic( gameover_classic ),
               .gameover_infinity( gameover_infinity ),
               .enable_shell1( enable_enermy1_bullet ),
@@ -181,7 +187,7 @@ game_logic_infinity u_game_logic_infinity(
 vga_driver u_vga_driver(
                .clk_vga( clk_VGA ),
                .rst_n( 1'b1 ),
-               .vga_en( 1'b1 ),
+               .vga_en( ),
                .HSync( Hsync ),
                .VSync( Vsync ),
                .vgaRed( VGARed ),
@@ -207,6 +213,19 @@ vga_data_selector u_vga_data_selector(
                       .in2( player1_tank_data ),
                       .in3( player1_bullet_data ),
                       .in4( player2_tank_data ),
+                      .in5( player2_bullet_data ),
+                      .in6( enermy1_tank_data ),
+                      .in7( enermy2_tank_data ),
+                      .in8( enermy3_tank_data ),
+                      .in9( enermy4_tank_data ),
+                      .in10(),
+                      .in11(),
+                      .in12(),
+                      .in13(),
+                      .in14(),
+                      .in15(),
+                      .in16(),
+                      .in17(),
                       .out( VGAData )
                   );
 
@@ -214,6 +233,8 @@ tank_display u_tank1_display(
                  .clk( clk ),
                  .tankDir( player1_tank_dir ),
                  .tank_destroyed( ~player1_tank_en ),
+                 .mode( mode ),
+                 .tank_revive( player1_revive ),
                  .vgaH( vgaH ),
                  .vgaV( vgaV ),
                  .tankH( player1_tank_H ),
@@ -225,11 +246,62 @@ tank_display u_tank2_display(
                  .clk( clk ),
                  .tankDir( player2_tank_dir ),
                  .tank_destroyed( ~player2_tank_en ),
+                 .mode( mode ),
+                 .tank_revive( player1_revive ),
                  .vgaH( vgaH ),
                  .vgaV( vgaV ),
                  .tankH( player2_tank_H ),
                  .tankV( player2_tank_V ),
                  .tankData( player2_tank_data )
+             );
+tank_display enermy1_tank_display(
+                 .clk( clk ),
+                 .tankDir( enermy1_tank_dir ),
+                 .tank_destroyed( ~enermy1_tank_en ),
+                 .mode( mode ),
+                 .tank_revive( player1_revive ),
+                 .vgaH( vgaH ),
+                 .vgaV( vgaV ),
+                 .tankH( enermy1_tank_H ),
+                 .tankV( enermy1_tank_V ),
+                 .tankData( enermy1_tank_data )
+             );
+
+tank_display enermy2_tank_display(
+                 .clk( clk ),
+                 .tankDir( enermy2_tank_dir ),
+                 .tank_destroyed( ~enermy2_tank_en ),
+                 .mode( mode ),
+                 .tank_revive( player1_revive ),
+                 .vgaH( vgaH ),
+                 .vgaV( vgaV ),
+                 .tankH( enermy2_tank_H ),
+                 .tankV( enermy2_tank_V ),
+                 .tankData( enermy2_tank_data )
+             );
+tank_display enermy3_tank_display(
+                 .clk( clk ),
+                 .tankDir( enermy3_tank_dir ),
+                 .tank_destroyed( ~enermy3_tank_en ),
+                 .mode( mode ),
+                 .tank_revive( player1_revive ),
+                 .vgaH( vgaH ),
+                 .vgaV( vgaV ),
+                 .tankH( enermy3_tank_H ),
+                 .tankV( enermy3_tank_V ),
+                 .tankData( enermy3_tank_data )
+             );
+tank_display enermy4_tank_display(
+                 .clk( clk ),
+                 .tankDir( enermy4_tank_dir ),
+                 .tank_destroyed( ~enermy4_tank_en ),
+                 .mode( mode ),
+                 .tank_revive( player1_revive ),
+                 .vgaH( vgaH ),
+                 .vgaV( vgaV ),
+                 .tankH( enermy4_tank_H ),
+                 .tankV( enermy4_tank_V ),
+                 .tankData( enermy4_tank_data )
              );
 
 tank_move player1_tank_move(
@@ -246,6 +318,32 @@ tank_move player2_tank_move(
               player2_tank_H, player2_tank_V, player2_tank_moving_direction
           );
 
+tank_move enermy1_tank_move(
+              clk, reset_n, 1,
+              0, 0,
+              enermy1_tank_dir, enermy1_tank_en, enermy1_tank_move_en, enermy1_moving,
+              enermy1_tank_H, enermy1_tank_V, enermy1_tank_moving_direction
+          );
+
+tank_move enermy2_tank_move(
+              clk, reset_n, 1,
+              540, 0,
+              enermy2_tank_dir, enermy2_tank_en, enermy2_tank_move_en, enermy2_moving,
+              enermy2_tank_H, enermy2_tank_V, enermy2_tank_moving_direction
+          );
+tank_move enermy3_tank_move(
+              clk, reset_n, 1,
+              0, 350,
+              enermy3_tank_dir, enermy3_tank_en, enermy3_tank_move_en, enermy3_moving,
+              enermy3_tank_H, enermy3_tank_V, enermy3_tank_moving_direction
+          );
+
+tank_move enermy4_tank_move(
+              clk, reset_n, 1,
+              540, 350,
+              enermy4_tank_dir, enermy4_tank_en, enermy4_tank_move_en, enermy4_moving,
+              enermy4_tank_H, enermy4_tank_V, enermy4_tank_moving_direction
+          );
 
 control u_control(
             .clk( clk ),
@@ -260,24 +358,47 @@ control u_control(
 
 wire player1_bullet_en_feedback, player2_bullet_en_feedback;
 wire player1_bullet_en, player2_bullet_en;
-wire [ 10: 0 ] player1_bullet_H, player1_bullet_V;
-wire [ 2: 0 ] player1_bullet_dir;
+wire enermy1_bullet_en_feedback, enermy2_bullet_en_feedback, enermy3_bullet_en_feedback, enermy4_bullet_en_feedback;
+wire enermy1_bullet_en, enermy2_bullet_en, enermy3_bullet_en, enermy4_bullet_en;
+wire [ 10: 0 ] player1_bullet_H, player1_bullet_V, player2_bullet_H, player2_bullet_V;
+wire [ 10: 0 ] enermy1_bullet_H, enermy1_bullet_V, enermy2_bullet_H, enermy2_bullet_V,
+     enermy3_bullet_H, enermy3_bullet_V, enermy4_bullet_H, enermy4_bullet_V;
+wire [ 2: 0 ] player1_bullet_dir, player2_bullet_dir;
+wire [ 2: 0 ] enermy1_bullet_dir, enermy2_bullet_dir, enermy3_bullet_dir, enermy4_bullet_dir;
 wire player1_revive, player2_revive;
-assign player1_revive = 0;
-assign player2_revive = 0;
+wire enermy1_revive, enermy2_revive, enermy3_revive, enermy4_revive;
+wire player1_scored, player2_scored;
+
 
 control_signals u_control_signals(
-                    clk, rst_n,
+                    clk, reset_n,
                     player1_bullet_H, player1_bullet_V, player2_bullet_H, player2_bullet_V,
+                    enermy1_bullet_H, enermy1_bullet_V,
+                    enermy2_bullet_H, enermy2_bullet_V,
+                    enermy3_bullet_H, enermy3_bullet_V,
+                    enermy4_bullet_H, enermy4_bullet_V,
                     player1_bullet_dir, player2_bullet_dir,
+                    enermy1_bullet_dir, enermy2_bullet_dir, enermy3_bullet_dir, enermy4_bullet_dir,
                     player1_tank_H, player1_tank_V, player2_tank_H, player2_tank_V,
+                    enermy1_tank_H, enermy1_tank_V,
+                    enermy2_tank_H, enermy2_tank_V,
+                    enermy3_tank_H, enermy3_tank_V,
+                    enermy4_tank_H, enermy4_tank_V,
                     //    player1_tank_en, player2_tank_en,
                     player1_moving, player2_moving,
+                    enermy1_moving, enermy2_moving, enermy3_moving, enermy4_moving,
                     player1_tank_dir, player2_tank_dir,
+                    enermy1_tank_dir, enermy2_tank_dir, enermy3_tank_dir, enermy4_tank_dir,
                     player1_revive, player2_revive,
+                    enermy1_revive, enermy2_revive, enermy3_revive, enermy4_revive,
                     player1_tank_en, player2_tank_en,
+                    enermy1_tank_en, enermy2_tank_en, enermy3_tank_en, enermy4_tank_en,
                     player1_tank_move_en, player2_tank_move_en,
-                    player1_bullet_en, player2_bullet_en
+                    enermy1_tank_move_en, enermy2_tank_move_en, enermy3_tank_move_en, enermy4_tank_move_en,
+                    player1_bullet_en, player2_bullet_en,
+                    enermy1_bullet_en, enermy2_bullet_en, enermy3_bullet_en, enermy4_bullet_en, player1_scored, player2_scored
+                    // scorea1, scorea2, scoreb1, scoreb2, scorec1, scorec2, scored1, scored2
+
                 );
 
 
@@ -286,7 +407,7 @@ bullet_control bullet_player1(
                    .reset_n( 1 ),
                    .tank_H( player1_tank_H ),
                    .tank_V( player1_tank_V ),
-                   //   .tank_en(player1_tank_en),
+                   .tank_en( player1_tank_en ),
                    .tank_dir( player1_tank_dir ),
                    .tank_fire( player1_fire ),
                    .vgaV( vgaV ),
@@ -298,9 +419,34 @@ bullet_control bullet_player1(
                    .bullet_V_feedback( player1_bullet_V ),
                    .bullet_direction( player1_bullet_dir )
                );
+bullet_control bullet_player2(
+                   .clk( clk ),
+                   .reset_n( 1 ),
+                   .tank_H( player2_tank_H ),
+                   .tank_V( player2_tank_V ),
+                   .tank_en( player2_tank_en ),
+                   .tank_dir( player2_tank_dir ),
+                   .tank_fire( player2_fire ),
+                   .vgaV( vgaV ),
+                   .vgaH( vgaH ),
+                   .start( 1 ),
+                   .ready( player2_bullet_en ),
+                   .bulletData( player2_bullet_data ),
+                   .bullet_H_feedback( player2_bullet_H ),
+                   .bullet_V_feedback( player2_bullet_V ),
+                   .bullet_direction( player2_bullet_dir )
+               );
+cal_score u_cal_score(
+              clk, reset_n, enermy1_tank_en, enermy2_tank_en, enermy3_tank_en, enermy4_tank_en,
+              player1_scored, player2_scored, scorea1, scorea2, scoreb1, scoreb2, scorec1, scorec2, scored1, scored2
+          );
 
-
-
+tank_generate u_tank_generate(
+                  clk_4Hz, player1_tank_en, player2_tank_en,
+                  enermy1_tank_en, enermy2_tank_en, enermy3_tank_en, enermy4_tank_en,
+                  player1_revive, player2_revive, enermy1_revive, enermy2_revive,
+                  enermy3_revive, enermy4_revive
+              );
 assign item_faster = 0;
 assign item_addtime = 0;
 assign item_invincible = 0;
@@ -334,12 +480,13 @@ SegAndLed u_SegAndLed(
               .score_classic( score_classic ),
               .score_infinity( score_infinity ),
               .timer( timer ),
-              .default_num( num ),              //when mode ==00(before begin mode) then output num ,you can also use it as debug
+              .default_num( num ),                                                                                                                    //when mode ==00(before begin mode) then output num ,you can also use it as debug
               .enable_game_classic( enable_game_classic ),
               .enable_game_infinity( enable_game_infinity ),
+              .player1_tank_en( player1_tank_en ),
+              .player2_tank_en( player2_tank_en ),
               .AN( AN ),
               .Segment( SEGMENT1 ),
               .LED( LED )
-
           );
 endmodule

@@ -46,6 +46,7 @@ module game_logic_classic(
        );
 reg [ 3: 0 ] score1;
 reg [ 3: 0 ] score2;
+reg mytank1_state_last, mytank2_state_last;
 initial begin
     gameover_classic <= 0;
 
@@ -55,29 +56,50 @@ initial begin
     score2 <= 0;
     score_classic <= 0;
 end
-always@( negedge enable_game_classic or negedge mytank1_state ) begin
-    if ( item_invincible == 0 ) begin
+
+always @( posedge clk ) begin
+    if ( ~item_invincible && mytank1_state_last && ~mytank1_state ) begin
         HP1_value <= HP1_value - 1;
     end
     else begin
         HP1_value <= HP1_value;
     end
-    if ( enable_game_classic == 1'b0 ) begin
-        HP1_value <= 4;
-    end
-end
-
-always@( negedge enable_game_classic or negedge mytank2_state ) begin
-    if ( item_invincible == 0 ) begin
+    if ( ~item_invincible && mytank2_state_last && ~mytank2_state ) begin
         HP2_value <= HP2_value - 1;
     end
     else begin
         HP2_value <= HP2_value;
     end
     if ( enable_game_classic == 1'b0 ) begin
+        HP1_value <= 4;
         HP2_value <= 4;
     end
+    mytank1_state_last <= mytank1_state;
+    mytank2_state_last <= mytank2_state;
 end
+// always@( negedge enable_game_classic or negedge mytank1_state ) begin
+//     if ( item_invincible == 0 ) begin
+//         HP1_value <= HP1_value - 1;
+//     end
+//     else begin
+//         HP1_value <= HP1_value;
+//     end
+//     if ( enable_game_classic == 1'b0 ) begin
+//         HP1_value <= 4;
+//     end
+// end
+
+// always@( negedge enable_game_classic or negedge mytank2_state ) begin
+//     if ( item_invincible == 0 ) begin
+//         HP2_value <= HP2_value - 1;
+//     end
+//     else begin
+//         HP2_value <= HP2_value;
+//     end
+//     if ( enable_game_classic == 1'b0 ) begin
+//         HP2_value <= 4;
+//     end
+// end
 
 always @( posedge clk ) begin
     if ( !enable_game_classic ) begin
