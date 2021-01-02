@@ -26,10 +26,11 @@ module tank_display(
            input tank_destroyed,
            input [ 2: 0 ] mode,
            input tank_revive,
+           input player_enermy,      //player is 0 and enermy is 1
            input [ 10: 0 ] vgaH,
-           input [ 10: 0 ] vgaV,        // Current VGA position
+           input [ 10: 0 ] vgaV,                      // Current VGA position
            input [ 10: 0 ] tankH,
-           input [ 10: 0 ] tankV,       // Current Y of tank
+           input [ 10: 0 ] tankV,                     // Current Y of tank
            output [ 11: 0 ] tankData
        );
 
@@ -49,7 +50,14 @@ wire [ 11: 0 ] tankLeftData;
 wire [ 11: 0 ] tankRightData;
 wire [ 11: 0 ] tankUpData;
 wire [ 11: 0 ] tankDownData;
+
+wire [ 11: 0 ] tankLeftData_enermy;
+wire [ 11: 0 ] tankRightData_enermy;
+wire [ 11: 0 ] tankUpData_enermy;
+wire [ 11: 0 ] tankDownData_enermy;
+
 wire [ 11: 0 ] outData;
+wire [ 11: 0 ] outData_enermy;
 
 assign tankAddr = tank_en ? ( ( vgaV - tankV ) * TANK_WIDTH + ( vgaH - tankH ) ) : 1'b0;
 
@@ -58,9 +66,17 @@ tank_right_img tank_right( .addra( tankAddr ), .clka( clk ), .douta( tankRightDa
 tank_up_img tank_up( .addra( tankAddr ), .clka( clk ), .douta( tankUpData ), .ena( 1'b1 ) );
 tank_down_img tank_down( .addra( tankAddr ), .clka( clk ), .douta( tankDownData ), .ena( 1'b1 ) );
 
+
+enermy_tank_left e_tank_left( .addra( tankAddr ), .clka( clk ), .douta( tankLeftData_enermy ), .ena( 1'b1 ) );
+enermy_tank_right e_tank_right( .addra( tankAddr ), .clka( clk ), .douta( tankRightData_enermy ), .ena( 1'b1 ) );
+enermy_tank_up e_tank_up( .addra( tankAddr ), .clka( clk ), .douta( tankUpData_enermy ), .ena( 1'b1 ) );
+enermy_tank_down e_tank_down( .addra( tankAddr ), .clka( clk ), .douta( tankDownData_enermy ), .ena( 1'b1 ) );
+
+
 tank_data_selector tank_select( .clk( clk ), .UP( tankUpData ), .DOWN( tankDownData ), .LEFT( tankLeftData ),
                                 .RIGHT( tankRightData ), .Dir( tankDir ), .tankData( outData ) );
-
-assign tankData = ( tank_en & ~tank_destroyed ) ? outData : 0;
+tank_data_selector e_tank_select( .clk( clk ), .UP( tankUpData_enermy ), .DOWN( tankDownData_enermy ), .LEFT( tankLeftData_enermy ),
+                                  .RIGHT( tankRightData_enermy ), .Dir( tankDir ), .tankData( outData_enermy ) );
+assign tankData = ( tank_en & ~tank_destroyed ) ? ( player_enermy ? outData_enermy : outData ) : 0;
 
 endmodule

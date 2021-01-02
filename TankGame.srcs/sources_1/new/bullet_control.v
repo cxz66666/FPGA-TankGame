@@ -11,6 +11,8 @@ module bullet_control(
            input tank_en,
            input [ 1: 0 ] tank_dir,
            input tank_fire,
+           input player_enermy,       //player is 0 and enermy is 1
+
            input [ 10: 0 ] vgaH,
            input [ 10: 0 ] vgaV,
            input ready,
@@ -117,12 +119,14 @@ always @( * ) begin: bullet_logic
 end
 
 reg bullet_move_en;
+wire [ 31: 0 ] bullet_speed;
+assign bullet_speed = player_enermy ? 500_000 : 1_000_000;
 always @( posedge clk ) begin: counter_logic
     if ( !reset_n ) begin
         counter <= 0;
         bullet_move_en <= 0;
     end
-    else if ( counter == 1_000_000 ) begin
+    else if ( counter == bullet_speed ) begin
         counter <= 0;
         bullet_move_en <= 1;
     end
