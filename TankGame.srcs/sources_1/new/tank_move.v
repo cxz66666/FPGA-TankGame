@@ -169,7 +169,7 @@ always @( posedge clk ) begin: tank_move_logic
 end
 
 reg [ 31: 0 ] counter;
-wire [ 31: 0 ] counter_num = player_enermy ? 2_500_000 : 3_000_000;
+wire [ 31: 0 ] counter_num = player_enermy ? 2_500_000 : 2_500_000;
 always @( posedge clk ) begin
     if ( !reset_n ) begin
         counter <= 0;

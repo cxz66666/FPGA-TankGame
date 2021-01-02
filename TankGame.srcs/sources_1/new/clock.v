@@ -25,17 +25,19 @@ module clock(
            input wire item_faster,
            output reg clk_2Hz,
            output reg clk_4Hz,
-           output reg clk_8Hz
+           output reg clk_8Hz,
+           output reg clk_10ms
        );
 
 
-reg [ 27: 0 ] cnt_2Hz, cnt_4Hz, cnt_8Hz;
+reg [ 27: 0 ] cnt_2Hz, cnt_4Hz, cnt_8Hz, cnt_10ms;
 reg [ 27: 0 ] ending_4Hz;
 
 initial begin
     cnt_4Hz <= 0;
     cnt_2Hz <= 0;
     cnt_8Hz <= 0;
+    cnt_10ms <= 0;
 end
 
 
@@ -93,6 +95,19 @@ always @( posedge clk_100MHz ) begin
     end
     else begin
         ending_4Hz <= 12500000;
+    end
+end
+
+always @( posedge clk_100MHz ) begin
+    cnt_10ms <= cnt_10ms + 1'b1;
+    if ( cnt_10ms >= 500_000 ) begin
+        clk_10ms <= 1;
+    end
+    else begin
+        clk_10ms <= 0;
+    end
+    if ( cnt_10ms >= 1000_000 ) begin
+        cnt_10ms <= 0;
     end
 end
 endmodule

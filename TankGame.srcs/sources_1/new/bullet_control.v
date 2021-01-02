@@ -5,13 +5,13 @@ module bullet_control(
            input clk,
            input reset_n,
            input start,
-
+           input [ 2: 0 ] mode,
            input [ 10: 0 ] tank_H,
            input [ 10: 0 ] tank_V,
            input tank_en,
            input [ 1: 0 ] tank_dir,
            input tank_fire,
-           input player_enermy,       //player is 0 and enermy is 1
+           input player_enermy,               //player is 0 and enermy is 1
 
            input [ 10: 0 ] vgaH,
            input [ 10: 0 ] vgaV,
@@ -92,8 +92,6 @@ always @( * ) begin: state_table
 end
 
 always @( * ) begin: bullet_logic
-    counter_en = 0;
-    bullet_direction = 3'b111;
     case ( current_state )
         READY: begin
             counter_en = 0;
@@ -115,12 +113,17 @@ always @( * ) begin: bullet_logic
             counter_en = 1;
             bullet_direction = 3'b011;
         end
+        default : begin
+            counter_en = 0;
+            bullet_direction = 3'b111;
+        end
+
     endcase
 end
 
 reg bullet_move_en;
 wire [ 31: 0 ] bullet_speed;
-assign bullet_speed = player_enermy ? 500_000 : 1_000_000;
+assign bullet_speed = player_enermy ? 1_000_000 : 1_000_000;
 always @( posedge clk ) begin: counter_logic
     if ( !reset_n ) begin
         counter <= 0;
@@ -237,6 +240,6 @@ bullet_down_img down( .addra( bullet_addr ), .clka( clk ), .douta( DOWN_data ), 
 tank_data_selector bullet_selector( .clk( clk ), .UP( UP_data ), .DOWN( DOWN_data ), .LEFT( LEFT_data ),
                                     .RIGHT( RIGHT_data ), .Dir( bullet_direction[ 1: 0 ] ), .tankData( outData ) );
 
-assign bulletData = ( ~ready & bullet_bound ) ? outData : 0;
+assign bulletData = ( ~ready & bullet_bound && ( mode == 3'b010 || mode == 3'b001 ) ) ? outData : 0;
 
 endmodule

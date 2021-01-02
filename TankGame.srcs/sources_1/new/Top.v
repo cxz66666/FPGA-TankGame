@@ -30,6 +30,7 @@ module Top(
 wire clk_2Hz;
 wire clk_4Hz;
 wire clk_8Hz;
+wire clk_10ms;
 wire clk_100MHz;
 wire clk_VGA;
 
@@ -41,7 +42,7 @@ wire item_addtime;
 wire item_test;
 wire [ 10: 0 ] vgaH, vgaV;
 wire [ 11: 0 ] VGAData;
-wire [ 11: 0 ] backgroundData;
+wire [ 11: 0 ] backgroundData, game_information_data;
 wire [ 1 : 0 ] player1_tank_dir, player2_tank_dir;
 wire [ 1: 0 ] enermy1_tank_dir, enermy2_tank_dir, enermy3_tank_dir, enermy4_tank_dir;
 wire [ 10: 0 ] player1_tank_H, player1_tank_V, player2_tank_H, player2_tank_V;
@@ -106,7 +107,8 @@ clock MyClock(
           .item_faster( item_faster ),
           .clk_2Hz( clk_2Hz ),
           .clk_4Hz( clk_4Hz ),
-          .clk_8Hz( clk_8Hz )
+          .clk_8Hz( clk_8Hz ),
+          .clk_10ms( clk_10ms )
       );
 KeyBoard_PS2 My_Ps2(
                  .clk_in( clk ),
@@ -122,7 +124,7 @@ game_mode u_game_mode(
               .clk( clk ),
               .btn_confirm( BTNC ),
               .btn_mode_sel( SW[ 0 ] ),
-              .btn_return( BTNU ),                                                                                                                                                                                        //the under button is used for return to the game
+              .btn_return( BTNU ),                                                                                                                                                                                                                         //the under button is used for return to the game
               .gameover_classic( gameover_classic ),
               .gameover_infinity( gameover_infinity ),
               .enable_shell1( enable_enermy1_bullet ),
@@ -238,7 +240,7 @@ vga_data_selector u_vga_data_selector(
                       .in11( enermy2_bullet_data ),
                       .in12( enermy3_bullet_data ),
                       .in13( enermy4_bullet_data ),
-                      .in14(),
+                      .in14( game_information_data ),
                       .in15(),
                       .in16(),
                       .in17(),
@@ -380,6 +382,8 @@ control u_control(
 enermy_control enermy1_control(
                    .clk_8Hz( clk_8Hz ),
                    .clk_2Hz( clk_2Hz ),
+                   .clk_10ms( clk_10ms ),
+                   .flag( 2'b00 ),
                    .player1_H( player1_tank_H ),
                    .player1_V( player1_tank_V ),
                    .player2_H( player2_tank_H ),
@@ -402,6 +406,9 @@ enermy_control enermy1_control(
 enermy_control enermy2_control(
                    .clk_8Hz( clk_8Hz ),
                    .clk_2Hz( clk_2Hz ),
+                   .clk_10ms( clk_10ms ),
+                   .flag( 2'b01 ),
+
                    .player1_H( player1_tank_H ),
                    .player1_V( player1_tank_V ),
                    .player2_H( player2_tank_H ),
@@ -424,6 +431,9 @@ enermy_control enermy2_control(
 enermy_control enermy3_control(
                    .clk_8Hz( clk_8Hz ),
                    .clk_2Hz( clk_2Hz ),
+                   .clk_10ms( clk_10ms ),
+                   .flag( 2'b10 ),
+
                    .player1_H( player1_tank_H ),
                    .player1_V( player1_tank_V ),
                    .player2_H( player2_tank_H ),
@@ -445,6 +455,9 @@ enermy_control enermy3_control(
 enermy_control enermy4_control(
                    .clk_8Hz( clk_8Hz ),
                    .clk_2Hz( clk_2Hz ),
+                   .clk_10ms( clk_10ms ),
+                   .flag( 2'b11 ),
+
                    .player1_H( player1_tank_H ),
                    .player1_V( player1_tank_V ),
                    .player2_H( player2_tank_H ),
@@ -501,6 +514,7 @@ control_signals u_control_signals(
 bullet_control bullet_player1(
                    .clk( clk ),
                    .reset_n( 1 ),
+                   .mode( mode ),
                    .tank_H( player1_tank_H ),
                    .tank_V( player1_tank_V ),
                    .tank_en( player1_tank_en ),
@@ -520,6 +534,7 @@ bullet_control bullet_player1(
 bullet_control bullet_player2(
                    .clk( clk ),
                    .reset_n( 1 ),
+                   .mode( mode ),
                    .tank_H( player2_tank_H ),
                    .tank_V( player2_tank_V ),
                    .tank_en( player2_tank_en ),
@@ -539,6 +554,7 @@ bullet_control bullet_player2(
 bullet_control bullet_enermy1(
                    .clk( clk ),
                    .reset_n( 1 ),
+                   .mode( mode ),
                    .tank_H( enermy1_tank_H ),
                    .tank_V( enermy1_tank_V ),
                    .tank_en( enermy1_tank_en ),
@@ -558,6 +574,7 @@ bullet_control bullet_enermy1(
 bullet_control bullet_enermy2(
                    .clk( clk ),
                    .reset_n( 1 ),
+                   .mode( mode ),
                    .tank_H( enermy2_tank_H ),
                    .tank_V( enermy2_tank_V ),
                    .tank_en( enermy2_tank_en ),
@@ -577,6 +594,7 @@ bullet_control bullet_enermy2(
 bullet_control bullet_enermy3(
                    .clk( clk ),
                    .reset_n( 1 ),
+                   .mode( mode ),
                    .tank_H( enermy3_tank_H ),
                    .tank_V( enermy3_tank_V ),
                    .tank_en( enermy3_tank_en ),
@@ -596,6 +614,7 @@ bullet_control bullet_enermy3(
 bullet_control bullet_enermy4(
                    .clk( clk ),
                    .reset_n( 1 ),
+                   .mode( mode ),
                    .tank_H( enermy4_tank_H ),
                    .tank_V( enermy4_tank_V ),
                    .tank_en( enermy4_tank_en ),
@@ -623,6 +642,16 @@ tank_generate u_tank_generate(
                   player1_revive, player2_revive, enermy1_revive, enermy2_revive,
                   enermy3_revive, enermy4_revive
               );
+game_information_display u_game_information_display(
+                             .clk( clk ),
+                             .enable_game_classic( enable_game_classic ),
+                             .enable_game_infinity( enable_game_infinity ),
+                             .score_classic( score_classic ),
+                             .timer( timer ),
+                             .vgaH( vgaH ),
+                             .vgaV( vgaV ),
+                             .VGA_data( game_information_data )
+                         );
 assign item_faster = 0;
 assign item_addtime = 0;
 assign item_invincible = 0;
@@ -656,7 +685,7 @@ SegAndLed u_SegAndLed(
               .score_classic( score_classic ),
               .score_infinity( score_infinity ),
               .timer( timer ),
-              .default_num( num ),                                                                                                                                                            //when mode ==00(before begin mode) then output num ,you can also use it as debug
+              .default_num( num ),                                                                                                                                                                                             //when mode ==00(before begin mode) then output num ,you can also use it as debug
               .enable_game_classic( enable_game_classic ),
               .enable_game_infinity( enable_game_infinity ),
               .player1_tank_en( player1_tank_en ),

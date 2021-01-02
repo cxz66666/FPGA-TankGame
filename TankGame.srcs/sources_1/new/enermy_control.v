@@ -23,6 +23,8 @@
 module enermy_control(
            input clk_8Hz,
            input clk_2Hz,
+           input clk_10ms,
+           input [ 1: 0 ] flag,       //00 01 10 11 four tanks
            input [ 10: 0 ] player1_H,
            input [ 10: 0 ] player1_V,
            input [ 10: 0 ] player2_H,
@@ -64,17 +66,25 @@ reg [ 1: 0 ] enermy_dir_feedback_tmp;
 reg [ 5: 0 ] counter_num;
 
 
-reg rand;
+wire [ 1: 0 ] rand_num;
+reg rand; // 0 is player2 and 1 is player1
 wire [ 10: 0 ] chase_tank_H = rand ? player1_H : player2_H;
 wire [ 10: 0 ] chase_tank_V = rand ? player1_V : player2_V;
 
 assign enermy_moving = enermy_tank_en;
 
 initial begin
-    enermy_fire = 1'b0;
-    counter_num <= 0;
-    rand <= $random % 2;
+    enermy_fire <= 1'b0;
+    counter_num <= flag;
+    rand <= flag[ 0 ];
 end
+
+Random u_Random(
+           .clk( clk_10ms ),
+           .rst_n( 1'b1 ),
+           .flag( flag ),
+           .random( rand_num )
+       );
 always @( posedge clk_8Hz ) begin
     if ( !player1_bullet_dir[ 2 ] ) begin
         case ( player1_bullet_dir[ 1 ] )
@@ -216,17 +226,17 @@ always @( posedge clk_8Hz ) begin
     end
 
 end
-always @( posedge clk_8Hz ) begin
-    if ( $random % 2 ) begin
+always @( posedge clk_2Hz ) begin
+    if ( counter_num % 3 > 0 ) begin
         enermy_dir_feedback <= enermy_dir_feedback_tmp;
     end
     else begin
-        enermy_dir_feedback <= $random % 4;
+        enermy_dir_feedback <= rand_num[ 1: 0 ];
     end
     counter_num <= counter_num + 1;
-    if ( counter_num == 8 ) begin
+    if ( counter_num == 9 ) begin
         counter_num <= 0;
-        rand = $random % 2;
+        rand <= rand_num[ 0 ] ;
     end
 end
 

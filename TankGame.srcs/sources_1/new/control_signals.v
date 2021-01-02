@@ -103,6 +103,7 @@ wire [ 7: 0 ] player1_bullet_collide_last, player2_bullet_collide_last;
 wire [ 7: 0 ] enermy_bullet_collide;
 wire [ 7: 0 ] player1_tank_collide, player2_tank_collide;
 wire [ 7: 0 ] enermy_tank_collide;
+wire [ 1: 0 ] enermy1_bullet_collide, enermy2_bullet_collide, enermy3_bullet_collide, enermy4_bullet_collide;
 
 // reg player1_tank_destroyed, player2_tank_destroyed;
 // object_collide_detection enermy1_mytank1(
@@ -112,6 +113,66 @@ wire [ 7: 0 ] enermy_tank_collide;
 //                              TANK_HEIGHT, TANK_WIDTH,
 //                              player1_bullet_collide[ 0 ], enermy_tank_collide[ 0 ]
 //                          );
+
+
+object_collide_detection enermy1_mytank1(
+                             enermy1_bullet_H, enermy1_bullet_V, ~enermy1_bullet_dir[ 2 ], enermy1_bullet_dir[ 1: 0 ],
+                             BULLET_LONGER, BULLET_SHORTER,
+                             player1_tank_H, player1_tank_V, player1_tank_en_feedback, player1_tank_dir[ 1: 0 ],
+                             TANK_HEIGHT, TANK_WIDTH,
+                             enermy1_bullet_collide[ 0 ], player1_tank_collide[ 0 ]
+                         );
+object_collide_detection enermy2_mytank1(
+                             enermy2_bullet_H, enermy2_bullet_V, ~enermy2_bullet_dir[ 2 ], enermy2_bullet_dir[ 1: 0 ],
+                             BULLET_LONGER, BULLET_SHORTER,
+                             player1_tank_H, player1_tank_V, player1_tank_en_feedback, player1_tank_dir[ 1: 0 ],
+                             TANK_HEIGHT, TANK_WIDTH,
+                             enermy2_bullet_collide[ 0 ], player1_tank_collide[ 1 ]
+                         );
+object_collide_detection enermy3_mytank1(
+                             enermy3_bullet_H, enermy3_bullet_V, ~enermy3_bullet_dir[ 2 ], enermy3_bullet_dir[ 1: 0 ],
+                             BULLET_LONGER, BULLET_SHORTER,
+                             player1_tank_H, player1_tank_V, player1_tank_en_feedback, player1_tank_dir[ 1: 0 ],
+                             TANK_HEIGHT, TANK_WIDTH,
+                             enermy3_bullet_collide[ 0 ], player1_tank_collide[ 2 ]
+                         );
+object_collide_detection enermy4_mytank1(
+                             enermy4_bullet_H, enermy4_bullet_V, ~enermy4_bullet_dir[ 2 ], enermy4_bullet_dir[ 1: 0 ],
+                             BULLET_LONGER, BULLET_SHORTER,
+                             player1_tank_H, player1_tank_V, player1_tank_en_feedback, player1_tank_dir[ 1: 0 ],
+                             TANK_HEIGHT, TANK_WIDTH,
+                             enermy4_bullet_collide[ 0 ], player1_tank_collide[ 3 ]
+                         );
+object_collide_detection enermy1_mytank2(
+                             enermy1_bullet_H, enermy1_bullet_V, ~enermy1_bullet_dir[ 2 ], enermy1_bullet_dir[ 1: 0 ],
+                             BULLET_LONGER, BULLET_SHORTER,
+                             player2_tank_H, player2_tank_V, player2_tank_en_feedback, player2_tank_dir[ 1: 0 ],
+                             TANK_HEIGHT, TANK_WIDTH,
+                             enermy1_bullet_collide[ 1 ], player2_tank_collide[ 0 ]
+                         );
+object_collide_detection enermy2_mytank2(
+                             enermy2_bullet_H, enermy2_bullet_V, ~enermy2_bullet_dir[ 2 ], enermy2_bullet_dir[ 1: 0 ],
+                             BULLET_LONGER, BULLET_SHORTER,
+                             player2_tank_H, player2_tank_V, player2_tank_en_feedback, player2_tank_dir[ 1: 0 ],
+                             TANK_HEIGHT, TANK_WIDTH,
+                             enermy2_bullet_collide[ 1 ], player2_tank_collide[ 1 ]
+                         );
+object_collide_detection enermy3_mytank2(
+                             enermy3_bullet_H, enermy3_bullet_V, ~enermy3_bullet_dir[ 2 ], enermy3_bullet_dir[ 1: 0 ],
+                             BULLET_LONGER, BULLET_SHORTER,
+                             player2_tank_H, player2_tank_V, player2_tank_en_feedback, player2_tank_dir[ 1: 0 ],
+                             TANK_HEIGHT, TANK_WIDTH,
+                             enermy3_bullet_collide[ 1 ], player2_tank_collide[ 2 ]
+                         );
+object_collide_detection enermy4_mytank2(
+                             enermy4_bullet_H, enermy4_bullet_V, ~enermy4_bullet_dir[ 2 ], enermy4_bullet_dir[ 1: 0 ],
+                             BULLET_LONGER, BULLET_SHORTER,
+                             player2_tank_H, player2_tank_V, player2_tank_en_feedback, player2_tank_dir[ 1: 0 ],
+                             TANK_HEIGHT, TANK_WIDTH,
+                             enermy4_bullet_collide[ 1 ], player2_tank_collide[ 3 ]
+                         );
+
+
 object_collide_detection mytank1_enermy1(
                              player1_bullet_H, player1_bullet_V, ~player1_bullet_dir[ 2 ], player1_bullet_dir[ 1: 0 ],
                              BULLET_LONGER, BULLET_SHORTER,
@@ -241,7 +302,59 @@ object_collide_detection mytank2_enermy4(
 
 
 
+always @( * ) begin: enermy1_bullet_enable_signal
+    if ( enermy1_bullet_dir[ 2 ] ) begin
+        enermy1_bullet_en <= 1;
+    end
+    else if ( | enermy1_bullet_collide ) begin
+        enermy1_bullet_en <= 1;
+    end
 
+    else begin
+        enermy1_bullet_en <= ~( ( ~enermy1_bullet_dir[ 2 ] ) && ( enermy1_bullet_V >= 0 && enermy1_bullet_V < HEIGHT - BULLET_LONGER &&
+                                enermy1_bullet_H >= 0 && enermy1_bullet_H < WIDTH - BULLET_SHORTER ) );
+    end
+end
+
+always @( * ) begin: enermy2_bullet_enable_signal
+    if ( enermy2_bullet_dir[ 2 ] ) begin
+        enermy2_bullet_en <= 1;
+    end
+    else if ( | enermy2_bullet_collide ) begin
+        enermy2_bullet_en <= 1;
+    end
+
+    else begin
+        enermy2_bullet_en <= ~( ( ~enermy2_bullet_dir[ 2 ] ) && ( enermy2_bullet_V >= 0 && enermy2_bullet_V < HEIGHT - BULLET_LONGER &&
+                                enermy2_bullet_H >= 0 && enermy2_bullet_H < WIDTH - BULLET_SHORTER ) );
+    end
+end
+always @( * ) begin: enermy3_bullet_enable_signal
+    if ( enermy3_bullet_dir[ 2 ] ) begin
+        enermy3_bullet_en <= 1;
+    end
+    else if ( | enermy3_bullet_collide ) begin
+        enermy3_bullet_en <= 1;
+    end
+
+    else begin
+        enermy3_bullet_en <= ~( ( ~enermy3_bullet_dir[ 2 ] ) && ( enermy3_bullet_V >= 0 && enermy3_bullet_V < HEIGHT - BULLET_LONGER &&
+                                enermy3_bullet_H >= 0 && enermy3_bullet_H < WIDTH - BULLET_SHORTER ) );
+    end
+end
+always @( * ) begin: enermy4_bullet_enable_signal
+    if ( enermy4_bullet_dir[ 2 ] ) begin
+        enermy4_bullet_en <= 1;
+    end
+    else if ( | enermy4_bullet_collide ) begin
+        enermy4_bullet_en <= 1;
+    end
+
+    else begin
+        enermy4_bullet_en <= ~( ( ~enermy4_bullet_dir[ 2 ] ) && ( enermy4_bullet_V >= 0 && enermy4_bullet_V < HEIGHT - BULLET_LONGER &&
+                                enermy4_bullet_H >= 0 && enermy4_bullet_H < WIDTH - BULLET_SHORTER ) );
+    end
+end
 always @( * ) begin: player1_bullet_enable_signal
     if ( player1_bullet_dir[ 2 ] ) begin
         player1_bullet_en <= 1;
@@ -471,15 +584,11 @@ always @( posedge clk ) begin: player2_tank_enable_signal
     else if ( !reset_n ) begin
         player2_tank_en_feedback <= 1;
     end
-    // else if ( !player2_tank_en_feedback ) begin
-    //     player2_tank_en_feedback <= 0;
-    // end
-    else if ( player1_bullet_collide[ 4 ] ) begin
+
+    else if ( enermy1_bullet_collide[ 1 ] || enermy2_bullet_collide[ 1 ] || enermy3_bullet_collide[ 1 ] || enermy4_bullet_collide[ 1 ] ) begin
         player2_tank_en_feedback <= 0;
     end
-    // else begin
-    //     player2_tank_en_feedback <= 1;
-    // end
+
 
     // player2_tank_en_feedback <= ~player1_bullet_collide[1];
 
@@ -497,15 +606,11 @@ always @( posedge clk ) begin: player1_tank_enable_signal
     else if ( !reset_n ) begin
         player1_tank_en_feedback <= 1;
     end
-    // else if ( !player1_tank_en_feedback ) begin
-    //     player1_tank_en_feedback <= 0;
-    // end
-    else if ( player2_bullet_collide[ 4 ] ) begin
+
+    else if ( enermy1_bullet_collide[ 0 ] || enermy2_bullet_collide[ 0 ] || enermy3_bullet_collide[ 0 ] || enermy4_bullet_collide[ 0 ] ) begin
         player1_tank_en_feedback <= 0;
     end
-    // else begin
-    //     player1_tank_en_feedback <= 1;
-    // end
+
 
     player1_tank_move_en <= 1;
     if ( player1_tank_collide[ 1 ] && player1_moving ) begin
