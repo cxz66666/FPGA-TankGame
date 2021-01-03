@@ -42,7 +42,7 @@ wire item_addtime;
 wire item_test;
 wire [ 10: 0 ] vgaH, vgaV;
 wire [ 11: 0 ] VGAData;
-wire [ 11: 0 ] backgroundData, game_information_data;
+wire [ 11: 0 ] backgroundData, game_information_data, heart_gametips_data;
 wire [ 1 : 0 ] player1_tank_dir, player2_tank_dir;
 wire [ 1: 0 ] enermy1_tank_dir, enermy2_tank_dir, enermy3_tank_dir, enermy4_tank_dir;
 wire [ 10: 0 ] player1_tank_H, player1_tank_V, player2_tank_H, player2_tank_V;
@@ -99,7 +99,8 @@ wire [ 2: 0 ] enermy1_bullet_dir, enermy2_bullet_dir, enermy3_bullet_dir, enermy
 wire player1_revive, player2_revive;
 wire enermy1_revive, enermy2_revive, enermy3_revive, enermy4_revive;
 wire player1_scored, player2_scored;
-
+wire [ 1: 0 ] winner;
+wire timeup;
 assign reset_n = ~BTNC;
 
 clock MyClock(
@@ -124,7 +125,7 @@ game_mode u_game_mode(
               .clk( clk ),
               .btn_confirm( BTNC ),
               .btn_mode_sel( SW[ 0 ] ),
-              .btn_return( BTNU ),                                                                                                                                                                                                                         //the under button is used for return to the game
+              .btn_return( BTNU ),                                                                                                                                                                                                                                      //the under button is used for return to the game
               .gameover_classic( gameover_classic ),
               .gameover_infinity( gameover_infinity ),
               .enable_shell1( enable_enermy1_bullet ),
@@ -174,7 +175,8 @@ game_logic_classic u_game_logic_classic(
                        .HP2_value( player2_HP ),
                        .gameover_classic( gameover_classic ),
                        .led_classic( LED_classic ),
-                       .score_classic( score_classic )
+                       .score_classic( score_classic ),
+                       .winner( winner )
                    );
 game_logic_infinity u_game_logic_infinity(
                         .clk( clk ),
@@ -197,7 +199,8 @@ game_logic_infinity u_game_logic_infinity(
                         .timer( timer ),
                         .gameover_infinity( gameover_infinity ),
                         .led_infinity( LED_infinity ),
-                        .score_infinity( score_infinity )
+                        .score_infinity( score_infinity ),
+                        .timeup( timeup )
                     );
 
 
@@ -241,7 +244,7 @@ vga_data_selector u_vga_data_selector(
                       .in12( enermy3_bullet_data ),
                       .in13( enermy4_bullet_data ),
                       .in14( game_information_data ),
-                      .in15(),
+                      .in15( heart_gametips_data ),
                       .in16(),
                       .in17(),
                       .out( VGAData )
@@ -652,6 +655,21 @@ game_information_display u_game_information_display(
                              .vgaV( vgaV ),
                              .VGA_data( game_information_data )
                          );
+
+vga_data_heart_gametips u_vga_data_heart_gametips(
+                            .clk( clk ),
+                            .mode( mode ),
+                            .vgaH( vgaH ),
+                            .vgaV( vgaV ),
+                            .winner( winner ),
+                            .timeup( timeup ),
+                            .gameover_classic( gameover_classic ),
+                            .gameover_infinity( gameover_infinity ),
+                            .HP1_value( player1_HP ),
+                            .HP2_value( player2_HP ),
+                            .score_classic( score_classic ),
+                            .vgaData( heart_gametips_data )
+                        );
 assign item_faster = 0;
 assign item_addtime = 0;
 assign item_invincible = 0;
@@ -685,7 +703,7 @@ SegAndLed u_SegAndLed(
               .score_classic( score_classic ),
               .score_infinity( score_infinity ),
               .timer( timer ),
-              .default_num( num ),                                                                                                                                                                                             //when mode ==00(before begin mode) then output num ,you can also use it as debug
+              .default_num( num ),                                                                                                                                                                                                          //when mode ==00(before begin mode) then output num ,you can also use it as debug
               .enable_game_classic( enable_game_classic ),
               .enable_game_infinity( enable_game_infinity ),
               .player1_tank_en( player1_tank_en ),

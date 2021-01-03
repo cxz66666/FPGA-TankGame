@@ -45,7 +45,8 @@ module game_logic_infinity(
            output reg gameover_infinity,
 
            output wire [ 15: 0 ] led_infinity,
-           output reg [ 7: 0 ] score_infinity //[7:4] is player2 ,[3:0] is player1
+           output reg [ 7: 0 ] score_infinity,       //[7:4] is player2 ,[3:0] is player1
+           output reg timeup
        );
 
 
@@ -68,6 +69,7 @@ initial begin
     item_flag <= 0;
     HP1_value <= 2;
     HP2_value <= 2;
+    timeup <= 0;
 end
 
 always @( posedge clk ) begin
@@ -125,6 +127,7 @@ always @( posedge clk ) begin
             score1 <= 0;
             score2 <= 0;
             score_infinity <= 0;
+            timeup <= 0;
         end
         else begin
             score_infinity[ 7: 4 ] <= score2[ 3: 0 ];
@@ -136,6 +139,7 @@ always @( posedge clk ) begin
         if ( timer == 0 || btn_stop || ( | HP1_value == 0 ) || ( | HP2_value == 0 ) ) begin
             timer <= 16;
             gameover_infinity <= 1;
+            timeup <= 1'b1;
         end
         else begin
             if ( score1 < scorea1 + scoreb1 + scorec1 + scored1 ) begin

@@ -27,7 +27,7 @@ module SegAndLed(
            input wire [ 15: 0 ] led_infinity,
            input wire [ 7: 0 ] score_classic,
            input wire [ 7: 0 ] score_infinity,
-           input wire [ 31: 0 ] default_num,                                 //when mode is 0
+           input wire [ 31: 0 ] default_num,                                  //when mode is 0
            input wire [ 4: 0 ] timer,
            input wire enable_game_classic,
            input wire enable_game_infinity,

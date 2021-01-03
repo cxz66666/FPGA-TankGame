@@ -24,7 +24,7 @@ module enermy_control(
            input clk_8Hz,
            input clk_2Hz,
            input clk_10ms,
-           input [ 1: 0 ] flag,       //00 01 10 11 four tanks
+           input [ 1: 0 ] flag,                          //00 01 10 11 four tanks
            input [ 10: 0 ] player1_H,
            input [ 10: 0 ] player1_V,
            input [ 10: 0 ] player2_H,
@@ -71,12 +71,17 @@ reg rand; // 0 is player2 and 1 is player1
 wire [ 10: 0 ] chase_tank_H = rand ? player1_H : player2_H;
 wire [ 10: 0 ] chase_tank_V = rand ? player1_V : player2_V;
 
+reg Continue;
+reg [ 2: 0 ] Continue_num;
+
 assign enermy_moving = enermy_tank_en;
 
 initial begin
     enermy_fire <= 1'b0;
     counter_num <= flag;
     rand <= flag[ 0 ];
+    Continue <= 0;
+    Continue_num <= 0;
 end
 
 Random u_Random(
@@ -85,12 +90,13 @@ Random u_Random(
            .flag( flag ),
            .random( rand_num )
        );
-always @( posedge clk_8Hz ) begin
-    if ( !player1_bullet_dir[ 2 ] ) begin
+always @( posedge clk_2Hz ) begin
+    if ( !player1_bullet_dir[ 2 ] && !Continue ) begin
         case ( player1_bullet_dir[ 1 ] )
 
             1'b0: begin
                 if ( player1_bullet_H <= tank_RBound && player1_bullet_H + BULLET_SHORTER >= enermy_H ) begin
+                    Continue <= 1'b1;
                     if ( ( enermy_V < player1_bullet_V && ~player1_bullet_dir[ 0 ] ) || ( enermy_V > player1_bullet_V && player1_bullet_dir[ 0 ] ) ) begin
                         if ( enermy_H < WIDTH / 6 ) begin
 
@@ -114,6 +120,8 @@ always @( posedge clk_8Hz ) begin
 
             1'b1: begin
                 if ( player1_bullet_V <= tank_DBound && player1_bullet_V + BULLET_SHORTER >= enermy_V ) begin
+                    Continue <= 1'b1;
+
                     if ( ( enermy_H < player1_bullet_H && ~player1_bullet_dir[ 0 ] ) || ( enermy_H > player1_bullet_H && player1_bullet_dir[ 0 ] ) ) begin
                         if ( enermy_V < HEIGHT / 6 ) begin
                             enermy_dir_feedback_tmp <= 2'b01;
@@ -137,11 +145,12 @@ always @( posedge clk_8Hz ) begin
     end
 
 
-    else if ( !player2_bullet_dir[ 2 ] ) begin
+    else if ( !player2_bullet_dir[ 2 ] && !Continue ) begin
         case ( player2_bullet_dir[ 1 ] )
 
             1'b0: begin
                 if ( player2_bullet_H <= tank_RBound && player2_bullet_H + BULLET_SHORTER >= enermy_H ) begin
+                    Continue <= 1'b1;
                     if ( ( enermy_V < player2_bullet_V && ~player2_bullet_dir[ 0 ] ) || ( enermy_V > player2_bullet_V && player2_bullet_dir[ 0 ] ) ) begin
                         if ( enermy_H < WIDTH / 6 ) begin
 
@@ -165,6 +174,7 @@ always @( posedge clk_8Hz ) begin
 
             1'b1: begin
                 if ( player2_bullet_V <= tank_DBound && player2_bullet_V + BULLET_SHORTER >= enermy_V ) begin
+                    Continue <= 1'b1;
                     if ( ( enermy_H < player2_bullet_H && ~player2_bullet_dir[ 0 ] ) || ( enermy_H > player2_bullet_H && player2_bullet_dir[ 0 ] ) ) begin
                         if ( enermy_V < HEIGHT / 6 ) begin
                             enermy_dir_feedback_tmp <= 2'b01;
@@ -224,10 +234,7 @@ always @( posedge clk_8Hz ) begin
         end
 
     end
-
-end
-always @( posedge clk_2Hz ) begin
-    if ( counter_num % 3 > 0 ) begin
+    if ( counter_num % 4 != flag ) begin
         enermy_dir_feedback <= enermy_dir_feedback_tmp;
     end
     else begin
@@ -238,6 +245,13 @@ always @( posedge clk_2Hz ) begin
         counter_num <= 0;
         rand <= rand_num[ 0 ] ;
     end
+    Continue_num <= Continue_num + 1'b1;
+    if ( Continue_num == 4 ) begin
+        Continue_num <= 0;
+        Continue <= 0;
+    end
+
 end
+
 
 endmodule
