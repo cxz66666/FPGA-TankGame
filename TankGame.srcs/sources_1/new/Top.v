@@ -81,7 +81,7 @@ wire	[ 3: 0 ] scorea2, scoreb2;
 wire	[ 3: 0 ] scorec1, scorec2;
 wire	[ 3: 0 ] scored1, scored2;
 wire [ 3: 0 ] player1_HP, player2_HP;
-
+wire [ 3: 0 ] player1_HP_infinity, player2_HP_infinity;
 wire [ 15: 0 ] LED_classic, LED_infinity;
 wire [ 7: 0 ] score_classic, score_infinity;
 wire [ 4: 0 ] timer;
@@ -125,7 +125,7 @@ game_mode u_game_mode(
               .clk( clk ),
               .btn_confirm( BTNC ),
               .btn_mode_sel( SW[ 0 ] ),
-              .btn_return( BTNU ),                                                                                                                                                                                                                                      //the under button is used for return to the game
+              .btn_return( BTNU ),                                                                                                                                                                                                                                             //the under button is used for return to the game
               .gameover_classic( gameover_classic ),
               .gameover_infinity( gameover_infinity ),
               .enable_shell1( enable_enermy1_bullet ),
@@ -200,7 +200,9 @@ game_logic_infinity u_game_logic_infinity(
                         .gameover_infinity( gameover_infinity ),
                         .led_infinity( LED_infinity ),
                         .score_infinity( score_infinity ),
-                        .timeup( timeup )
+                        .timeup( timeup ),
+                        .HP1_value( player1_HP_infinity ),
+                        .HP2_value( player2_HP_infinity )
                     );
 
 
@@ -667,6 +669,8 @@ vga_data_heart_gametips u_vga_data_heart_gametips(
                             .gameover_infinity( gameover_infinity ),
                             .HP1_value( player1_HP ),
                             .HP2_value( player2_HP ),
+                            .HP1_value_infinity( player1_HP_infinity ),
+                            .HP2_value_infinity( player2_HP_infinity ),
                             .score_classic( score_classic ),
                             .vgaData( heart_gametips_data )
                         );
@@ -703,7 +707,7 @@ SegAndLed u_SegAndLed(
               .score_classic( score_classic ),
               .score_infinity( score_infinity ),
               .timer( timer ),
-              .default_num( num ),                                                                                                                                                                                                          //when mode ==00(before begin mode) then output num ,you can also use it as debug
+              .default_num( num ),                                                                                                                                                                                                                 //when mode ==00(before begin mode) then output num ,you can also use it as debug
               .enable_game_classic( enable_game_classic ),
               .enable_game_infinity( enable_game_infinity ),
               .player1_tank_en( player1_tank_en ),

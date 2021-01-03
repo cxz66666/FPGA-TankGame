@@ -31,6 +31,8 @@ module vga_data_heart_gametips(
            input gameover_infinity,
            input [ 3: 0 ] HP1_value,
            input [ 3: 0 ] HP2_value,
+           input [ 3: 0 ] HP1_value_infinity,
+           input [ 3: 0 ] HP2_value_infinity,
            input [ 7: 0 ] score_classic,
            output [ 11: 0 ] vgaData
        );
@@ -46,11 +48,11 @@ always @( posedge clk ) begin
         heart_reg2 <= 0;
     end
     else if ( mode == 1 || mode == 2 ) begin
-        if ( vgaH >= 5 && vgaH < 25 && vgaV >= 180 && vgaV < 300 && ( vgaV - 180 ) < HP1_value * 20 ) begin
+        if ( vgaH >= 5 && vgaH < 25 && vgaV >= 180 && vgaV < 300 && ( vgaV - 180 ) < ( mode == 1 ? HP1_value : HP1_value_infinity ) * 20 ) begin
             addra_heart_pic1 <= ( vgaH - 5 ) + ( ( vgaV - 180 ) % 20 ) * 20;
             heart_reg1 <= heart_pic1;
         end
-        else if ( vgaH >= 615 && vgaH < 635 && vgaV >= 180 && vgaV < 300 && ( vgaV - 180 ) < HP2_value * 20 ) begin
+        else if ( vgaH >= 615 && vgaH < 635 && vgaV >= 180 && vgaV < 300 && ( vgaV - 180 ) < ( mode == 1 ? HP2_value : HP2_value_infinity ) * 20 ) begin
             addra_heart_pic2 <= ( vgaH - 615 ) + ( ( vgaV - 180 ) % 20 ) * 20;
             heart_reg2 <= heart_pic2;
         end

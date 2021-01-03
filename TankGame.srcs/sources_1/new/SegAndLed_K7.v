@@ -8,7 +8,7 @@ module SegAndLed_K7(
            input wire [ 15: 0 ] led_infinity,
            input wire [ 7: 0 ] score_classic,
            input wire [ 7: 0 ] score_infinity,
-           input wire [ 31: 0 ] default_num,                                         //when mode is 0
+           input wire [ 31: 0 ] default_num,                                            //when mode is 0
            input wire [ 4: 0 ] timer,
            input wire enable_game_classic,
            input wire enable_game_infinity,
@@ -60,7 +60,17 @@ always @( posedge clk ) begin
         2'b11:
             num <= { 4'b1000, 4'b1000, 4'b1000, 4'b1000, 4'b1000, 4'b1000, 4'b1000, 4'b1000 };
         default num <= 0;
-
     endcase
 end
+SEG_DRV m_SEG_DRV(
+            .clk( clk ),
+            .num( num ),
+            .ena( 1'b1 ),
+            .point( 8'b0000_0000 ),
+            .S_DT( seg_sout ),
+            .S_CLK( seg_clk ),
+            .S_CLR( seg_clrn ),
+            .S_EN( SEG_PEN )
+
+        );
 endmodule

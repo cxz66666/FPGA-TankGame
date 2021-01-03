@@ -39,13 +39,14 @@ module game_logic_infinity(
            input item_test,
 
            input item_invincible,
-
+           output reg [ 3: 0 ] HP1_value,
+           output reg [ 3: 0 ] HP2_value,
            output reg [ 4: 0 ] timer,
 
            output reg gameover_infinity,
 
            output wire [ 15: 0 ] led_infinity,
-           output reg [ 7: 0 ] score_infinity,       //[7:4] is player2 ,[3:0] is player1
+           output reg [ 7: 0 ] score_infinity,               //[7:4] is player2 ,[3:0] is player1
            output reg timeup
        );
 
@@ -67,8 +68,8 @@ initial begin
     score2 <= 0;
     add_flag <= 0;
     item_flag <= 0;
-    HP1_value <= 2;
-    HP2_value <= 2;
+    HP1_value <= 3;
+    HP2_value <= 3;
     timeup <= 0;
 end
 
@@ -86,8 +87,8 @@ always @( posedge clk ) begin
         HP2_value <= HP2_value;
     end
     if ( enable_game_infinity == 1'b0 ) begin
-        HP1_value <= 2;
-        HP2_value <= 2;
+        HP1_value <= 3;
+        HP2_value <= 3;
     end
     mytank1_state_last <= mytank1_state;
     mytank2_state_last <= mytank2_state;
@@ -144,7 +145,7 @@ always @( posedge clk ) begin
         else begin
             if ( score1 < scorea1 + scoreb1 + scorec1 + scored1 ) begin
                 if ( add_flag == 0 && timer > 0 && timer < 16 ) begin
-                    timer <= timer + 4;
+                    timer <= timer + 3;
                     cnt <= 0;
                     add_flag = 1;
                 end
@@ -154,7 +155,7 @@ always @( posedge clk ) begin
             end
             if ( score2 < scorea2 + scoreb2 + scorec2 + scored2 ) begin
                 if ( add_flag == 0 && timer > 0 && timer < 16 ) begin
-                    timer <= timer + 4;
+                    timer <= timer + 3;
                     cnt <= 0;
                     add_flag = 1;
                 end
@@ -163,7 +164,7 @@ always @( posedge clk ) begin
                 add_flag = 0;
             end
 
-            score1 <= scorea1 + scoreb1 + scorec1 + scored1 ;
+            score1 <= scorea1 + scoreb1 + scorec1 + scored1;
             score2 <= scorea2 + scoreb2 + scorec2 + scored2;
 
             if ( item_addtime == 1 || item_test ) begin
