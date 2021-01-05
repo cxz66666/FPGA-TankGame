@@ -26,11 +26,11 @@ module tank_display(
            input tank_destroyed,
            input [ 2: 0 ] mode,
            input tank_revive,
-           input player_enermy,      //player is 0 and enermy is 1
+           input player_enermy,              //player is 0 and enermy is 1
            input [ 10: 0 ] vgaH,
-           input [ 10: 0 ] vgaV,                      // Current VGA position
+           input [ 10: 0 ] vgaV,                              // Current VGA position
            input [ 10: 0 ] tankH,
-           input [ 10: 0 ] tankV,                     // Current Y of tank
+           input [ 10: 0 ] tankV,                             // Current Y of tank
            output [ 11: 0 ] tankData
        );
 
@@ -58,8 +58,12 @@ wire [ 11: 0 ] tankDownData_enermy;
 
 wire [ 11: 0 ] outData;
 wire [ 11: 0 ] outData_enermy;
-
+wire [ 11: 0 ] outData_star;
 assign tankAddr = tank_en ? ( ( vgaV - tankV ) * TANK_WIDTH + ( vgaH - tankH ) ) : 1'b0;
+
+invincible_star_32_32 u_invincible_star_32_32(
+                          .addra( tankAddr ), .clka( clk ), .douta( outData_star ), .ena( 1'b1 )
+                      );
 
 tank_left_img tank_left( .addra( tankAddr ), .clka( clk ), .douta( tankLeftData ), .ena( 1'b1 ) );
 tank_right_img tank_right( .addra( tankAddr ), .clka( clk ), .douta( tankRightData ), .ena( 1'b1 ) );
@@ -77,6 +81,6 @@ tank_data_selector tank_select( .clk( clk ), .UP( tankUpData ), .DOWN( tankDownD
                                 .RIGHT( tankRightData ), .Dir( tankDir ), .tankData( outData ) );
 tank_data_selector e_tank_select( .clk( clk ), .UP( tankUpData_enermy ), .DOWN( tankDownData_enermy ), .LEFT( tankLeftData_enermy ),
                                   .RIGHT( tankRightData_enermy ), .Dir( tankDir ), .tankData( outData_enermy ) );
-assign tankData = ( tank_en & ~tank_destroyed ) ? ( player_enermy ? outData_enermy : outData ) : 0;
+assign tankData = ( ( tank_en & ~tank_destroyed ) ? ( player_enermy ? outData_enermy : outData ) : 0 ) | ( tank_revive ? outData_star : 0 );
 
 endmodule

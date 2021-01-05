@@ -24,7 +24,7 @@ module enermy_control(
            input clk_8Hz,
            input clk_2Hz,
            input clk_10ms,
-           input [ 1: 0 ] flag,                          //00 01 10 11 four tanks
+           input [ 1: 0 ] flag,                                     //00 01 10 11 four tanks
            input [ 10: 0 ] player1_H,
            input [ 10: 0 ] player1_V,
            input [ 10: 0 ] player2_H,
@@ -78,7 +78,7 @@ assign enermy_moving = enermy_tank_en;
 
 initial begin
     enermy_fire <= 1'b0;
-    counter_num <= flag;
+    counter_num <= 0;
     rand <= flag[ 0 ];
     Continue <= 0;
     Continue_num <= 0;
@@ -88,7 +88,8 @@ Random u_Random(
            .clk( clk_10ms ),
            .rst_n( 1'b1 ),
            .flag( flag ),
-           .random( rand_num )
+           .random( rand_num ),
+           .random_14()
        );
 always @( posedge clk_2Hz ) begin
     if ( !player1_bullet_dir[ 2 ] && !Continue ) begin
@@ -196,7 +197,7 @@ always @( posedge clk_2Hz ) begin
         endcase
 
     end
-    else begin
+    if ( Continue ) begin
         enermy_fire <= 1'b0;
         if ( rand ) begin
             if ( enermy_V + TANK_HEIGHT / 2 <= chase_tank_V ) begin
@@ -235,7 +236,21 @@ always @( posedge clk_2Hz ) begin
 
     end
     if ( counter_num % 4 != flag ) begin
-        enermy_dir_feedback <= enermy_dir_feedback_tmp;
+        if ( enermy_dir_feedback == 2'b00 && enermy_V == 0 ) begin
+            enermy_dir_feedback <= rand_num[ 1: 0 ];
+        end
+        else if ( enermy_dir_feedback == 2'b01 && tank_DBound >= HEIGHT ) begin
+            enermy_dir_feedback <= rand_num[ 1: 0 ];
+        end
+        else if ( enermy_dir_feedback == 2'b10 && enermy_H == 0 ) begin
+            enermy_dir_feedback <= rand_num[ 1: 0 ];
+        end
+        else if ( enermy_dir_feedback == 2'b11 && tank_RBound >= WIDTH ) begin
+            enermy_dir_feedback <= rand_num[ 1: 0 ];
+        end
+        else begin
+            enermy_dir_feedback <= enermy_dir_feedback_tmp;
+        end
     end
     else begin
         enermy_dir_feedback <= rand_num[ 1: 0 ];
@@ -252,6 +267,4 @@ always @( posedge clk_2Hz ) begin
     end
 
 end
-
-
 endmodule
