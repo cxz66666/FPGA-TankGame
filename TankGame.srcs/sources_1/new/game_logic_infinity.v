@@ -36,9 +36,8 @@ module game_logic_infinity(
            input [ 3: 0 ] scored1,
            input [ 3: 0 ] scored2,
            input item_addtime,
-           input item_test,
-
            input item_invincible,
+           input which_player,
            output reg [ 3: 0 ] HP1_value,
            output reg [ 3: 0 ] HP2_value,
            output reg [ 4: 0 ] timer,
@@ -46,7 +45,7 @@ module game_logic_infinity(
            output reg gameover_infinity,
 
            output wire [ 15: 0 ] led_infinity,
-           output reg [ 7: 0 ] score_infinity,               //[7:4] is player2 ,[3:0] is player1
+           output reg [ 7: 0 ] score_infinity,                        //[7:4] is player2 ,[3:0] is player1
            output reg timeup
        );
 
@@ -56,9 +55,8 @@ reg [ 3: 0 ] score1;
 reg [ 3: 0 ] score2;
 reg add_flag;
 reg item_flag;
-reg [ 1: 0 ] HP1_value, HP2_value;
 reg mytank1_state_last, mytank2_state_last;
-
+reg item_addtime_last;
 initial begin
     gameover_infinity <= 0;
     cnt <= 0;
@@ -167,7 +165,7 @@ always @( posedge clk ) begin
             score1 <= scorea1 + scoreb1 + scorec1 + scored1;
             score2 <= scorea2 + scoreb2 + scorec2 + scored2;
 
-            if ( item_addtime == 1 || item_test ) begin
+            if ( item_addtime == 1 ) begin
                 if ( item_flag == 0 && timer > 0 && timer < 16 ) begin
                     begin
                         if ( timer == 15 ) begin
@@ -197,6 +195,11 @@ always @( posedge clk ) begin
                 timer <= timer - 1;
                 cnt <= 0;
             end
+
+            if ( item_addtime && ~item_addtime_last ) begin
+                timer <= timer + 10;
+            end
+            item_addtime_last <= item_addtime;
         end
 
     end

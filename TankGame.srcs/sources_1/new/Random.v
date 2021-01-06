@@ -1,3 +1,5 @@
+
+
 `timescale 1ns / 1ps 
 //////////////////////////////////////////////////////////////////////////////////
 // Company:
@@ -25,9 +27,10 @@ module Random(
            input rst_n,
            input [ 1: 0 ] flag,
            output reg [ 1: 0 ] random,
-           output reg [ 14: 0 ] random_14
+           output [ 14: 0 ] random_14
        );
 reg [ 14: 0 ] rand_num;
+assign random_14 = rand_num;
 always @( * ) begin
     case ( flag )
         2'b00:

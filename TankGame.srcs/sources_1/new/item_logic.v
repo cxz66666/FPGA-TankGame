@@ -43,12 +43,12 @@ module item_logic(
            output reg item_frozen,
            output reg item_addHP,
            output reg which_player,
-           output [ 11: 0 ] VGA_data
+           output [ 11: 0 ] VGA_data_reward
        );
 
 wire [ 1: 0 ] item_type;
 wire [ 10: 0 ] random_xpos, random_ypos;
-reg [ 31: 0 ] cnt_num;
+reg [ 31: 0 ] cnt;
 
 wire	set_require;
 reg	set_finish;
@@ -57,7 +57,7 @@ wire	[ 11: 0 ] VGA_data_information;
 assign	VGA_data_reward = VGA_data_information;
 
 initial begin
-    cnt_num <= 0;
+    cnt <= 0;
     item_invincible <= 0;
     item_addtime <= 0;
     item_frozen <= 0;
@@ -92,7 +92,7 @@ object_collide_detection tank2_item(
 
 always @( posedge clk ) begin
     if ( enable_reward ) begin
-        if ( player1_tank_get || player2_tank_get ) begin
+        if ( set_require == 1'b1 && ( player1_tank_get || player2_tank_get ) ) begin
             case ( item_type )
                 1: begin
                     if ( enable_game_classic ) begin
@@ -127,7 +127,7 @@ always @( posedge clk ) begin
         end
         if ( item_invincible ) begin
             cnt <= cnt + 1;
-            if ( cnt >= 500000000 ) begin
+            if ( cnt >= 800000000 ) begin
                 item_invincible <= 1'b0;
                 cnt <= 0;
             end
@@ -148,15 +148,44 @@ always @( posedge clk ) begin
         end
         if ( item_frozen ) begin
             cnt <= cnt + 1;
-            if ( cnt >= 300000000 ) begin
+            if ( cnt >= 400000000 ) begin
                 item_frozen <= 1'b0;
                 cnt <= 0;
             end
         end
     end
+    else begin
+        cnt <= 0;
+        item_invincible <= 0;
+        item_addtime <= 0;
+        item_frozen <= 0;
+        item_addHP <= 0;
+        which_player <= 0;
+    end
 end
 
 item_random_generator u_item_random_generator(
-
+                          .clk( clk ),
+                          .clk_4Hz( clk_4Hz ),
+                          .set_finish( set_finish ),
+                          .enable( enable_reward ),
+                          .dout( random_out ),
+                          .item_type( item_type ),
+                          .set_require( set_require ),
+                          .random_xpos( random_xpos ),
+                          .random_ypos( random_ypos )
                       );
+item_display u_item_display(
+                 .clk( clk ),
+                 .set_require( set_require ),
+                 .enable_reward( enable_reward ),
+                 .enable_game_classic( enable_game_classic ),
+                 .enable_game_infinity( enable_game_infinity ),
+                 .random_xpos( random_xpos ),
+                 .random_ypos( random_ypos ),
+                 .item_type( item_type ),
+                 .VGA_h( VGA_h ),
+                 .VGA_V( VGA_V ),
+                 .VGA_data( VGA_data_information )
+             );
 endmodule

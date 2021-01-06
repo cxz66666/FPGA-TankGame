@@ -39,10 +39,12 @@ wire [ 9: 0 ] KeyBoard_Output;
 wire item_faster;
 wire item_invincible;
 wire item_addtime;
-wire item_test;
+wire item_frozen;
+wire item_addHP;
+wire which_player; //0 is player1 get and 1 is player2 get
 wire [ 10: 0 ] vgaH, vgaV;
 wire [ 11: 0 ] VGAData;
-wire [ 11: 0 ] backgroundData, game_information_data, heart_gametips_data;
+wire [ 11: 0 ] backgroundData, game_information_data, heart_gametips_data, item_data;
 wire [ 1 : 0 ] player1_tank_dir, player2_tank_dir;
 wire [ 1: 0 ] enermy1_tank_dir, enermy2_tank_dir, enermy3_tank_dir, enermy4_tank_dir;
 wire [ 10: 0 ] player1_tank_H, player1_tank_V, player2_tank_H, player2_tank_V;
@@ -125,7 +127,7 @@ game_mode u_game_mode(
               .clk( clk ),
               .btn_confirm( BTNC ),
               .btn_mode_sel( SW[ 0 ] ),
-              .btn_return( BTNU ),                                                                                                                                                                                                                                              //the under button is used for return to the game
+              .btn_return( BTNU ),                                                                                                                                                                                                                                                                    //the under button is used for return to the game
               .gameover_classic( gameover_classic ),
               .gameover_infinity( gameover_infinity ),
               .enable_shell1( enable_enermy1_bullet ),
@@ -171,6 +173,8 @@ game_logic_classic u_game_logic_classic(
                        .scored1( scored1 ),
                        .scored2( scored2 ),
                        .item_invincible( item_invincible ),
+                       .item_addHP( item_addHP ),
+                       .which_player( which_player ),
                        .HP1_value( player1_HP ),
                        .HP2_value( player2_HP ),
                        .gameover_classic( gameover_classic ),
@@ -194,8 +198,8 @@ game_logic_infinity u_game_logic_infinity(
                         .scored1( scored1 ),
                         .scored2( scored2 ),
                         .item_addtime( item_addtime ),
-                        .item_test( item_test ),
                         .item_invincible( item_invincible ),
+                        .which_player( which_player ),
                         .timer( timer ),
                         .gameover_infinity( gameover_infinity ),
                         .led_infinity( LED_infinity ),
@@ -247,7 +251,7 @@ vga_data_selector u_vga_data_selector(
                       .in13( enermy4_bullet_data ),
                       .in14( game_information_data ),
                       .in15( heart_gametips_data ),
-                      .in16(),
+                      .in16( item_data ),
                       .in17(),
                       .out( VGAData )
                   );
@@ -259,10 +263,12 @@ tank_display u_tank1_display(
                  .mode( mode ),
                  .tank_revive( player1_revive ),
                  .player_enermy( 1'b0 ),
+
                  .vgaH( vgaH ),
                  .vgaV( vgaV ),
                  .tankH( player1_tank_H ),
                  .tankV( player1_tank_V ),
+                 .item_invincible( ( item_invincible ) & ( ~which_player ) ),
                  .tankData( player1_tank_data )
              );
 
@@ -277,6 +283,7 @@ tank_display u_tank2_display(
                  .vgaV( vgaV ),
                  .tankH( player2_tank_H ),
                  .tankV( player2_tank_V ),
+                 .item_invincible( ( item_invincible ) & ( which_player ) ),
                  .tankData( player2_tank_data )
              );
 tank_display enermy1_tank_display(
@@ -336,41 +343,41 @@ tank_display enermy4_tank_display(
 tank_move player1_tank_move(
               clk, reset_n, 1,
               150, 150,
-              player1_tank_dir, player1_tank_en, player1_tank_move_en, 1'b0, player1_moving,
+              player1_tank_dir, player1_tank_en, player1_tank_move_en, 1'b0, player1_moving, item_frozen,
               player1_tank_H, player1_tank_V, player1_tank_moving_direction
           );
 
 tank_move player2_tank_move(
               clk, reset_n, 1,
               350, 350,
-              player2_tank_dir, player2_tank_en, player2_tank_move_en, 1'b0, player2_moving,
+              player2_tank_dir, player2_tank_en, player2_tank_move_en, 1'b0, player2_moving, item_frozen,
               player2_tank_H, player2_tank_V, player2_tank_moving_direction
           );
 
 tank_move enermy1_tank_move(
               clk, reset_n, 1,
               0, 0,
-              enermy1_tank_dir, enermy1_tank_en, enermy1_tank_move_en, 1'b1, enermy1_moving,
+              enermy1_tank_dir, enermy1_tank_en, enermy1_tank_move_en, 1'b1, enermy1_moving, item_frozen,
               enermy1_tank_H, enermy1_tank_V, enermy1_tank_moving_direction
           );
 
 tank_move enermy2_tank_move(
               clk, reset_n, 1,
               540, 0,
-              enermy2_tank_dir, enermy2_tank_en, enermy2_tank_move_en, 1'b1, enermy2_moving,
+              enermy2_tank_dir, enermy2_tank_en, enermy2_tank_move_en, 1'b1, enermy2_moving, item_frozen,
               enermy2_tank_H, enermy2_tank_V, enermy2_tank_moving_direction
           );
 tank_move enermy3_tank_move(
               clk, reset_n, 1,
               0, 350,
-              enermy3_tank_dir, enermy3_tank_en, enermy3_tank_move_en, 1'b1, enermy3_moving,
+              enermy3_tank_dir, enermy3_tank_en, enermy3_tank_move_en, 1'b1, enermy3_moving, item_frozen,
               enermy3_tank_H, enermy3_tank_V, enermy3_tank_moving_direction
           );
 
 tank_move enermy4_tank_move(
               clk, reset_n, 1,
               540, 350,
-              enermy4_tank_dir, enermy4_tank_en, enermy4_tank_move_en, 1'b1, enermy4_moving,
+              enermy4_tank_dir, enermy4_tank_en, enermy4_tank_move_en, 1'b1, enermy4_moving, item_frozen,
               enermy4_tank_H, enermy4_tank_V, enermy4_tank_moving_direction
           );
 
@@ -675,11 +682,31 @@ vga_data_heart_gametips u_vga_data_heart_gametips(
                             .vgaData( heart_gametips_data )
                         );
 assign item_faster = 0;
-assign item_addtime = 0;
-assign item_invincible = 0;
-assign item_test = 0;
 
-
+item_logic u_item_logic(
+               .clk( clk ),
+               .clk_4Hz( clk_4Hz ),
+               .enable_reward( enable_reward ),
+               .enable_game_classic( enable_game_classic ),
+               .enable_game_infinity( enable_game_infinity ),
+               .player1_tank_H( player1_tank_H ),
+               .player1_tank_V( player1_tank_V ),
+               .player1_tank_dir( player1_tank_dir ),
+               .player1_tank_en( player1_tank_en ),
+               .player2_tank_H( player2_tank_H ),
+               .player2_tank_V( player2_tank_V ),
+               .player2_tank_dir( player2_tank_dir ),
+               .player2_tank_en( player2_tank_en ),
+               .VGA_h( vgaH ),
+               .VGA_V( vgaV ),
+               .reset_n( reset_n ),
+               .item_invincible( item_invincible ),
+               .item_addHP( item_addHP ),
+               .item_addtime( item_addtime ),
+               .item_frozen( item_frozen ),
+               .which_player( which_player ),
+               .VGA_data_reward( item_data )
+           );
 
 wire [ 31: 0 ] num ;
 // assign num = { 3'b000, KeyBoard_Output[ 0 ], 3'b000, KeyBoard_Output[ 1 ], 3'b000, KeyBoard_Output[ 2 ], 3'b000, KeyBoard_Output[ 3 ],
@@ -707,7 +734,7 @@ SegAndLed u_SegAndLed(
               .score_classic( score_classic ),
               .score_infinity( score_infinity ),
               .timer( timer ),
-              .default_num( num ),                                                                                                                                                                                                                  //when mode ==00(before begin mode) then output num ,you can also use it as debug
+              .default_num( num ),                                                                                                                                                                                                                                        //when mode ==00(before begin mode) then output num ,you can also use it as debug
               .enable_game_classic( enable_game_classic ),
               .enable_game_infinity( enable_game_infinity ),
               .player1_tank_en( player1_tank_en ),

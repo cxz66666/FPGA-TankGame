@@ -26,11 +26,12 @@ module tank_display(
            input tank_destroyed,
            input [ 2: 0 ] mode,
            input tank_revive,
-           input player_enermy,              //player is 0 and enermy is 1
+           input player_enermy,                  //player is 0 and enermy is 1
            input [ 10: 0 ] vgaH,
-           input [ 10: 0 ] vgaV,                              // Current VGA position
+           input [ 10: 0 ] vgaV,                                  // Current VGA position
            input [ 10: 0 ] tankH,
-           input [ 10: 0 ] tankV,                             // Current Y of tank
+           input [ 10: 0 ] tankV,                                 // Current Y of tank
+           input item_invincible,
            output [ 11: 0 ] tankData
        );
 
@@ -81,6 +82,6 @@ tank_data_selector tank_select( .clk( clk ), .UP( tankUpData ), .DOWN( tankDownD
                                 .RIGHT( tankRightData ), .Dir( tankDir ), .tankData( outData ) );
 tank_data_selector e_tank_select( .clk( clk ), .UP( tankUpData_enermy ), .DOWN( tankDownData_enermy ), .LEFT( tankLeftData_enermy ),
                                   .RIGHT( tankRightData_enermy ), .Dir( tankDir ), .tankData( outData_enermy ) );
-assign tankData = ( ( tank_en & ~tank_destroyed ) ? ( player_enermy ? outData_enermy : outData ) : 0 ) | ( tank_revive ? outData_star : 0 );
+assign tankData = ( ( tank_en & ~tank_destroyed ) ? ( player_enermy ? outData_enermy : outData ) : 0 ) | ( ( ( tank_revive || item_invincible ) && tank_en ) ? outData_star : 0 );
 
 endmodule
