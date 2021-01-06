@@ -42,11 +42,12 @@ module item_logic(
            output reg item_addtime,
            output reg item_frozen,
            output reg item_addHP,
+           output reg item_faster,
            output reg which_player,
            output [ 11: 0 ] VGA_data_reward
        );
 
-wire [ 1: 0 ] item_type;
+wire [ 2: 0 ] item_type;
 wire [ 10: 0 ] random_xpos, random_ypos;
 reg [ 31: 0 ] cnt;
 
@@ -63,6 +64,7 @@ initial begin
     item_frozen <= 0;
     item_addHP <= 0;
     which_player <= 0;
+    item_faster <= 0;
 end
 
 wire player1_tank_get, player1_tank_tmp;
@@ -112,11 +114,17 @@ always @( posedge clk ) begin
                     item_invincible <= 1'b1;
                     which_player <= player2_tank_get;
                 end
+                4: begin
+                    item_faster <= 1'b1;
+                    which_player <= player2_tank_get;
+
+                end
                 default : begin
                     item_addHP <= 1'b0;
                     item_addtime <= 1'b0;
                     item_frozen <= 1'b0;
                     item_invincible <= 1'b0;
+                    item_faster <= 1'b0;
                 end
 
             endcase
@@ -124,6 +132,13 @@ always @( posedge clk ) begin
         end
         else begin
             set_finish <= 1'b0;
+        end
+        if ( item_faster ) begin
+            cnt <= cnt + 1;
+            if ( cnt >= 900000000 ) begin
+                item_faster <= 1'b0;
+                cnt <= 0;
+            end
         end
         if ( item_invincible ) begin
             cnt <= cnt + 1;
@@ -159,6 +174,7 @@ always @( posedge clk ) begin
         item_invincible <= 0;
         item_addtime <= 0;
         item_frozen <= 0;
+        item_faster <= 0;
         item_addHP <= 0;
         which_player <= 0;
     end

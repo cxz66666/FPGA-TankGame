@@ -2,6 +2,7 @@
 
 module control_signals(
            clk, reset_n,
+           item_invincible,
            player1_bullet_H, player1_bullet_V, player2_bullet_H, player2_bullet_V,
            enermy1_bullet_H, enermy1_bullet_V,
            enermy2_bullet_H, enermy2_bullet_V,
@@ -30,6 +31,7 @@ module control_signals(
            //    scorea1, scorea2, scoreb1, scoreb2, scorec1, scorec2, scored1, scored2
        );
 input clk, reset_n;
+input item_invincible;
 input [ 10: 0 ] player1_bullet_H, player1_bullet_V, player2_bullet_H, player2_bullet_V;
 input [ 10: 0 ] enermy1_bullet_H, enermy1_bullet_V,
       enermy2_bullet_H, enermy2_bullet_V,
@@ -789,7 +791,7 @@ end
 // end
 always @( posedge clk ) begin: player2_tank_enable_signal
 
-    if ( player2_revive ) begin
+    if ( player2_revive || item_invincible ) begin
         player2_tank_en_feedback <= 1;
     end
     else if ( !reset_n ) begin
@@ -808,7 +810,7 @@ end
 
 
 always @( posedge clk ) begin: player1_tank_enable_signal
-    if ( player1_revive ) begin
+    if ( player1_revive || item_invincible ) begin
         player1_tank_en_feedback <= 1;
     end
     else if ( !reset_n ) begin

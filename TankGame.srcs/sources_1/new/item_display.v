@@ -26,7 +26,7 @@ module item_display(
            input enable_reward,
            input [ 10: 0 ] random_xpos,
            input [ 10: 0 ] random_ypos,
-           input [ 1: 0 ] item_type,
+           input [ 2: 0 ] item_type,
            input [ 10: 0 ] VGA_h,
            input [ 10: 0 ] VGA_V,
            input enable_game_classic,
@@ -39,12 +39,12 @@ module item_display(
 wire [ 5: 0 ] ITEM_WIDTH ;
 wire [ 5: 0 ] ITEM_HEIGHT;
 
-assign ITEM_WIDTH = item_type == 2'b11 ? 32 : 20;
-assign ITEM_HEIGHT = item_type == 2'b11 ? 32 : 20;
-reg [ 8: 0 ] addra_add_heart, addra_add_timing, addra_frozen;
+assign ITEM_WIDTH = item_type == 3 ? 32 : 20;
+assign ITEM_HEIGHT = item_type == 3 ? 32 : 20;
+reg [ 8: 0 ] addra_add_heart, addra_add_timing, addra_frozen, addra_faster;
 reg [ 9: 0 ] addra_invincible;
 
-wire[ 11: 0 ] add_heart_pic, add_timing_pic, add_frozen_pic, invincible_pic;
+wire[ 11: 0 ] add_heart_pic, add_timing_pic, add_frozen_pic, invincible_pic, faster_pic;
 // reg [ 11: 0 ] add_heart_reg, add_timing_reg, add_frozen_reg, invincible_reg;
 
 
@@ -55,9 +55,10 @@ always @( posedge clk ) begin
             addra_add_heart <= ( VGA_h - random_xpos ) + ( VGA_V - random_ypos ) * 20;
             addra_add_timing <= ( VGA_h - random_xpos ) + ( VGA_V - random_ypos ) * 20;
             addra_frozen <= ( VGA_h - random_xpos ) + ( VGA_V - random_ypos ) * 20;
+            addra_faster <= ( VGA_h - random_xpos ) + ( VGA_V - random_ypos ) * 20;
             addra_invincible <= ( VGA_h - random_xpos ) + ( VGA_V - random_ypos ) * 32;
             case ( item_type )
-                2'b01: begin
+                1: begin
                     if ( enable_game_classic == 1 ) begin
                         VGA_data <= add_heart_pic;
                     end
@@ -65,11 +66,14 @@ always @( posedge clk ) begin
                         VGA_data <= add_timing_pic;
                     end
                 end
-                2'b10: begin
+                2: begin
                     VGA_data <= add_frozen_pic;
                 end
-                2'b11: begin
+                3: begin
                     VGA_data <= invincible_pic;
+                end
+                4: begin
+                    VGA_data <= faster_pic;
                 end
                 default : begin
                     VGA_data <= 0;
@@ -109,4 +113,11 @@ invincible_star_32_32 u_invincible_star(
                           .addra( addra_invincible ),
                           .douta( invincible_pic )
                       );
+
+lightning_20_20 u_lightning_20_20(
+                    .clka( clk ),
+                    .ena( 1'b1 ),
+                    .addra( addra_faster ),
+                    .douta( faster_pic )
+                );
 endmodule

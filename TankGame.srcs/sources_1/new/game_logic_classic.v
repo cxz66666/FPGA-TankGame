@@ -44,7 +44,7 @@ module game_logic_classic(
 
            output reg gameover_classic,
            output wire [ 15: 0 ] led_classic,
-           output reg [ 7: 0 ] score_classic,              //[7:4] is player2 ,[3:0] is player1
+           output reg [ 7: 0 ] score_classic,                   //[7:4] is player2 ,[3:0] is player1
            output reg [ 1: 0 ] winner
        );
 reg [ 3: 0 ] score1;
@@ -135,9 +135,9 @@ always @( posedge clk ) begin
         score2 <= scorea2 + scoreb2 + scorec2 + scored2;
         score_classic[ 7: 4 ] <= score2[ 3: 0 ];
         score_classic[ 3: 0 ] <= score1[ 3: 0 ];
-        if ( HP1_value == 0 || HP2_value == 0 || score1 >= 8 || score2 >= 8 ) begin
+        if ( HP1_value == 0 || HP2_value == 0 || score1 >= 14 || score2 >= 14 ) begin
             gameover_classic <= 1;
-            if ( HP2_value == 0 || score1 >= 8 ) begin
+            if ( HP2_value == 0 || score1 >= 14 ) begin
                 winner <= 2'b10;
             end
             else begin

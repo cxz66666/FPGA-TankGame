@@ -3,7 +3,7 @@
 module tank_move(
            clk, reset_n, start,
            init_H, init_V,
-           tank_dir, tank_en, tank_move_en, player_enermy, moving, item_frozen,
+           tank_dir, tank_en, tank_move_en, player_enermy, moving, item_frozen, item_faster,
            tank_H, tank_V, tank_dir_feedback
        );
 
@@ -17,6 +17,7 @@ input [ 10: 0 ] init_V;
 input [ 1: 0 ] tank_dir;
 input tank_en;
 input tank_move_en;
+input item_faster;
 input player_enermy;
 output reg [ 10: 0 ] tank_H;
 output reg [ 10: 0 ] tank_V;
@@ -170,7 +171,7 @@ always @( posedge clk ) begin: tank_move_logic
 end
 
 reg [ 31: 0 ] counter;
-wire [ 31: 0 ] counter_num = player_enermy ? 2_000_000 : 2_000_000;
+wire [ 31: 0 ] counter_num = item_faster ? 1_500_000 : 2_100_000;
 always @( posedge clk ) begin
     if ( !reset_n ) begin
         counter <= 0;

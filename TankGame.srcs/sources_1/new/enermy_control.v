@@ -24,7 +24,7 @@ module enermy_control(
            input clk_8Hz,
            input clk_2Hz,
            input clk_10ms,
-           input [ 1: 0 ] flag,                           //00 01 10 11 four tanks
+           input [ 1: 0 ] flag,                                  //00 01 10 11 four tanks
            input [ 10: 0 ] player1_H,
            input [ 10: 0 ] player1_V,
            input [ 10: 0 ] player2_H,
@@ -73,7 +73,7 @@ wire [ 10: 0 ] chase_tank_V = rand ? player1_V : player2_V;
 
 reg Continue;
 reg [ 2: 0 ] Continue_num;
-
+reg enermy_fire_tmp;
 assign enermy_moving = enermy_tank_en;
 
 initial begin
@@ -82,6 +82,7 @@ initial begin
     rand <= flag[ 0 ];
     Continue <= 0;
     Continue_num <= 0;
+    enermy_fire_tmp <= 0;
 end
 
 Random u_Random(
@@ -198,7 +199,7 @@ always @( posedge clk_2Hz ) begin
 
     end
     else begin
-        enermy_fire <= 1'b0;
+        enermy_fire_tmp <= 1'b0;
         if ( rand ) begin
             if ( enermy_V + TANK_HEIGHT / 2 <= chase_tank_V ) begin
                 enermy_dir_feedback_tmp <= 2'b01;
@@ -207,7 +208,7 @@ always @( posedge clk_2Hz ) begin
                 enermy_dir_feedback_tmp <= 2'b00;
             end
             else begin
-                enermy_fire <= 1'b1;
+                enermy_fire_tmp <= 1'b1;
                 if ( enermy_H < chase_tank_H ) begin
                     enermy_dir_feedback_tmp <= 2'b11;
                 end
@@ -224,7 +225,7 @@ always @( posedge clk_2Hz ) begin
                 enermy_dir_feedback_tmp <= 2'b10;
             end
             else begin
-                enermy_fire <= 1'b1;
+                enermy_fire_tmp <= 1'b1;
                 if ( enermy_V < chase_tank_V ) begin
                     enermy_dir_feedback_tmp <= 2'b01;
                 end
@@ -247,10 +248,11 @@ always @( posedge clk_2Hz ) begin
         rand <= rand_num[ 0 ] ;
     end
     Continue_num <= Continue_num + 1'b1;
-    if ( Continue_num == 4 ) begin
+    if ( Continue_num == 2 ) begin
         Continue_num <= 0;
         Continue <= 0;
     end
+    enermy_fire <= enermy_fire_tmp;
 
 end
 

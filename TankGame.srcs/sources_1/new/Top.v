@@ -107,7 +107,6 @@ assign reset_n = ~BTNC;
 
 clock MyClock(
           .clk_100MHz( clk ),
-          .item_faster( item_faster ),
           .clk_2Hz( clk_2Hz ),
           .clk_4Hz( clk_4Hz ),
           .clk_8Hz( clk_8Hz ),
@@ -127,7 +126,7 @@ game_mode u_game_mode(
               .clk( clk ),
               .btn_confirm( BTNC ),
               .btn_mode_sel( SW[ 0 ] ),
-              .btn_return( BTNU ),                                                                                                                                                                                                                                                                    //the under button is used for return to the game
+              .btn_return( BTNU ),                                                                                                                                                                                                                                                                          //the under button is used for return to the game
               .gameover_classic( gameover_classic ),
               .gameover_infinity( gameover_infinity ),
               .enable_shell1( enable_enermy1_bullet ),
@@ -343,41 +342,41 @@ tank_display enermy4_tank_display(
 tank_move player1_tank_move(
               clk, reset_n, 1,
               150, 150,
-              player1_tank_dir, player1_tank_en, player1_tank_move_en, 1'b0, player1_moving, item_frozen,
+              player1_tank_dir, player1_tank_en, player1_tank_move_en, 1'b0, player1_moving, item_frozen, item_faster,
               player1_tank_H, player1_tank_V, player1_tank_moving_direction
           );
 
 tank_move player2_tank_move(
               clk, reset_n, 1,
               350, 350,
-              player2_tank_dir, player2_tank_en, player2_tank_move_en, 1'b0, player2_moving, item_frozen,
+              player2_tank_dir, player2_tank_en, player2_tank_move_en, 1'b0, player2_moving, item_frozen, item_faster,
               player2_tank_H, player2_tank_V, player2_tank_moving_direction
           );
 
 tank_move enermy1_tank_move(
               clk, reset_n, 1,
               0, 0,
-              enermy1_tank_dir, enermy1_tank_en, enermy1_tank_move_en, 1'b1, enermy1_moving, item_frozen,
+              enermy1_tank_dir, enermy1_tank_en, enermy1_tank_move_en, 1'b1, enermy1_moving, item_frozen, item_faster,
               enermy1_tank_H, enermy1_tank_V, enermy1_tank_moving_direction
           );
 
 tank_move enermy2_tank_move(
               clk, reset_n, 1,
               540, 0,
-              enermy2_tank_dir, enermy2_tank_en, enermy2_tank_move_en, 1'b1, enermy2_moving, item_frozen,
+              enermy2_tank_dir, enermy2_tank_en, enermy2_tank_move_en, 1'b1, enermy2_moving, item_frozen, item_faster,
               enermy2_tank_H, enermy2_tank_V, enermy2_tank_moving_direction
           );
 tank_move enermy3_tank_move(
               clk, reset_n, 1,
               0, 350,
-              enermy3_tank_dir, enermy3_tank_en, enermy3_tank_move_en, 1'b1, enermy3_moving, item_frozen,
+              enermy3_tank_dir, enermy3_tank_en, enermy3_tank_move_en, 1'b1, enermy3_moving, item_frozen, item_faster,
               enermy3_tank_H, enermy3_tank_V, enermy3_tank_moving_direction
           );
 
 tank_move enermy4_tank_move(
               clk, reset_n, 1,
               540, 350,
-              enermy4_tank_dir, enermy4_tank_en, enermy4_tank_move_en, 1'b1, enermy4_moving, item_frozen,
+              enermy4_tank_dir, enermy4_tank_en, enermy4_tank_move_en, 1'b1, enermy4_moving, item_frozen, item_faster,
               enermy4_tank_H, enermy4_tank_V, enermy4_tank_moving_direction
           );
 
@@ -493,6 +492,7 @@ enermy_control enermy4_control(
 
 control_signals u_control_signals(
                     clk, reset_n,
+                    item_invincible,
                     player1_bullet_H, player1_bullet_V, player2_bullet_H, player2_bullet_V,
                     enermy1_bullet_H, enermy1_bullet_V,
                     enermy2_bullet_H, enermy2_bullet_V,
@@ -533,7 +533,7 @@ bullet_control bullet_player1(
                    .tank_dir( player1_tank_dir ),
                    .tank_fire( player1_fire ),
                    .player_enermy( 1'b0 ),
-
+                   .item_faster( item_faster ),
                    .vgaV( vgaV ),
                    .vgaH( vgaH ),
                    .start( 1 ),
@@ -553,7 +553,7 @@ bullet_control bullet_player2(
                    .tank_dir( player2_tank_dir ),
                    .tank_fire( player2_fire ),
                    .player_enermy( 1'b0 ),
-
+                   .item_faster( item_faster ),
                    .vgaV( vgaV ),
                    .vgaH( vgaH ),
                    .start( 1 ),
@@ -573,7 +573,7 @@ bullet_control bullet_enermy1(
                    .tank_dir( enermy1_tank_dir ),
                    .tank_fire( enermy1_fire ),
                    .player_enermy( 1'b1 ),
-
+                   .item_faster( item_faster ),
                    .vgaV( vgaV ),
                    .vgaH( vgaH ),
                    .start( 1 ),
@@ -593,7 +593,7 @@ bullet_control bullet_enermy2(
                    .tank_dir( enermy2_tank_dir ),
                    .tank_fire( enermy2_fire ),
                    .player_enermy( 1'b1 ),
-
+                   .item_faster( item_faster ),
                    .vgaV( vgaV ),
                    .vgaH( vgaH ),
                    .start( 1 ),
@@ -613,7 +613,7 @@ bullet_control bullet_enermy3(
                    .tank_dir( enermy3_tank_dir ),
                    .tank_fire( enermy3_fire ),
                    .player_enermy( 1'b1 ),
-
+                   .item_faster( item_faster ),
                    .vgaV( vgaV ),
                    .vgaH( vgaH ),
                    .start( 1 ),
@@ -633,7 +633,7 @@ bullet_control bullet_enermy4(
                    .tank_dir( enermy4_tank_dir ),
                    .tank_fire( enermy4_fire ),
                    .player_enermy( 1'b1 ),
-
+                   .item_faster( item_faster ),
                    .vgaV( vgaV ),
                    .vgaH( vgaH ),
                    .start( 1 ),
@@ -681,7 +681,7 @@ vga_data_heart_gametips u_vga_data_heart_gametips(
                             .score_classic( score_classic ),
                             .vgaData( heart_gametips_data )
                         );
-assign item_faster = 0;
+
 
 item_logic u_item_logic(
                .clk( clk ),
@@ -704,6 +704,7 @@ item_logic u_item_logic(
                .item_addHP( item_addHP ),
                .item_addtime( item_addtime ),
                .item_frozen( item_frozen ),
+               .item_faster( item_faster ),
                .which_player( which_player ),
                .VGA_data_reward( item_data )
            );
@@ -734,7 +735,7 @@ SegAndLed u_SegAndLed(
               .score_classic( score_classic ),
               .score_infinity( score_infinity ),
               .timer( timer ),
-              .default_num( num ),                                                                                                                                                                                                                                        //when mode ==00(before begin mode) then output num ,you can also use it as debug
+              .default_num( num ),                                                                                                                                                                                                                                              //when mode ==00(before begin mode) then output num ,you can also use it as debug
               .enable_game_classic( enable_game_classic ),
               .enable_game_infinity( enable_game_infinity ),
               .player1_tank_en( player1_tank_en ),

@@ -22,7 +22,6 @@
 
 module clock(
            input wire clk_100MHz,
-           input wire item_faster,
            output reg clk_2Hz,
            output reg clk_4Hz,
            output reg clk_8Hz,
@@ -90,12 +89,9 @@ always @( posedge clk_100MHz ) begin
 end
 
 always @( posedge clk_100MHz ) begin
-    if ( item_faster == 1'b1 ) begin
-        ending_4Hz <= 6250000;
-    end
-    else begin
-        ending_4Hz <= 12500000;
-    end
+
+    ending_4Hz <= 12500000;
+
 end
 
 always @( posedge clk_100MHz ) begin

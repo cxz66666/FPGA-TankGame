@@ -27,7 +27,7 @@ module item_random_generator(
            input enable,
            output reg dout,
            output reg set_require,
-           output reg [ 1: 0 ] item_type,
+           output reg [ 2: 0 ] item_type,
            output reg [ 10: 0 ] random_xpos,
            output reg [ 10: 0 ] random_ypos
        );
@@ -81,7 +81,7 @@ always @( posedge clk ) begin
             lock <= 1'b1;
             random_xpos <= random_num[ 14: 1 ] % ( WIDTH - TANK_WIDTH );
             random_ypos <= random_num[ 13: 0 ] % ( HEIGHT - TANK_HEIGHT );
-            item_type <= ( random_num[ 14: 0 ] % 3 ) + 1;
+            item_type <= ( random_num[ 14: 0 ] % 4 ) + 1;
         end
     end
     else begin

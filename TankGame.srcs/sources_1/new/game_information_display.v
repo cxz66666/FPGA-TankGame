@@ -95,10 +95,10 @@ infinity_info_180_24 u_infinity_info_180_24(
 always @( posedge clk ) begin
     if ( enable_game_classic ) begin
         vga_en3 <= 1;
-        if ( vgaH >= 320 && vgaH < 480 && vgaV >= 1 && vgaV < 21 && ( vgaH - 320 ) < score_classic[ 3: 0 ] * 20 ) begin
+        if ( vgaH >= 320 && vgaH < 640 && vgaV >= 1 && vgaV < 21 && ( vgaH - 320 ) < score_classic[ 3: 0 ] * 20 ) begin
             addr_redflag <= ( vgaH - 320 ) % 20 + ( vgaV - 1 ) * 20;
         end
-        else if ( vgaH >= 320 && vgaH < 480 && vgaV >= 24 && vgaV < 44 && ( vgaH - 320 ) < score_classic[ 7: 4 ] * 20 ) begin
+        else if ( vgaH >= 320 && vgaH < 640 && vgaV >= 24 && vgaV < 44 && ( vgaH - 320 ) < score_classic[ 7: 4 ] * 20 ) begin
             addr_redflag <= ( vgaH - 320 ) % 20 + ( vgaV - 24 ) * 20;
         end
         else begin
