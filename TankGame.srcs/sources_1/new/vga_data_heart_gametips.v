@@ -23,6 +23,8 @@
 module vga_data_heart_gametips(
            input clk,
            input [ 2: 0 ] mode,
+           input [ 7: 0 ] initial_num,
+           input choose_mode,
            input [ 10: 0 ] vgaH,
            input [ 10: 0 ] vgaV,
            input [ 1: 0 ] winner,
@@ -42,6 +44,52 @@ wire [ 11: 0 ] heart_pic1 , heart_pic2, classic_gameover_tips_pic1, classic_game
 reg [ 8: 0 ] addra_heart_pic1, addra_heart_pic2;
 reg [ 12: 0 ] addr_classic_gameover_tips_pic1, addr_classic_gameover_tips_pic2, addr_infinity_gameover_tips_pic;
 
+reg [ 8: 0 ] addra_initial_heart;
+reg [ 7: 0 ] addra_initial_time;
+wire [ 11: 0 ] initial_heart_pic, initial_time_pic;
+reg [ 11: 0 ] initial_heart_reg, initial_time_reg;
+
+always @( posedge clk ) begin
+    if ( mode != 0 ) begin
+        initial_heart_reg <= 0;
+        initial_time_reg <= 0;
+    end
+    else begin
+        if ( choose_mode == 0 ) begin
+            initial_time_reg <= 0;
+            if ( vgaV >= 320 && vgaV < 340 && vgaH >= 320 && vgaH < 500 && ( vgaH - 320 ) < initial_num[ 3: 0 ] * 20 ) begin
+                addra_initial_heart <= ( vgaH - 320 ) % 20 + ( vgaV - 320 ) * 20;
+                initial_heart_reg <= initial_heart_pic;
+            end
+            else begin
+                initial_heart_reg <= 0;
+            end
+        end
+        else begin
+            initial_heart_reg <= 0;
+            if ( vgaV >= 320 && vgaV < 335 && vgaH >= 320 && vgaH < 640 && ( vgaH - 320 ) < initial_num[ 7: 4 ] * 15 ) begin
+                addra_initial_time <= ( vgaH - 320 ) % 15 + ( vgaV - 320 ) * 15;
+                initial_time_reg <= initial_time_pic;
+            end
+            else begin
+                initial_time_reg <= 0;
+            end
+        end
+    end
+end
+
+heart_20_20 u1_heart_20_20(
+                .clka( clk ),
+                .addra( addra_initial_heart ),
+                .ena( 1'b1 ),
+                .douta( initial_heart_pic )
+            );
+timing_15_15 u2_timing_15_15(
+                 .clka( clk ),
+                 .addra( addra_initial_time ),
+                 .ena( 1'b1 ),
+                 .douta( initial_time_pic )
+             );
 always @( posedge clk ) begin
     if ( mode == 0 || mode == 3 ) begin
         heart_reg1 <= 0;
@@ -129,8 +177,6 @@ heart_20_20 player1_heart(
                 .douta( heart_pic1 ),
                 .ena( 1'b1 )
             );
-
-
 heart_20_20 player2_heart(
                 .addra( addra_heart_pic2 ),
                 .clka( clk ),
@@ -158,5 +204,5 @@ timeisup_180_38 u_timeisup_180_38(
                     .douta( infinity_gameover_tips_pic ),
                     .ena( 1'b1 )
                 );
-assign vgaData = heart_reg1 | heart_reg2 | classic_gameover_tips_reg1 | classic_gameover_tips_reg2 | infinity_gameover_tips_reg;
+assign vgaData = heart_reg1 | heart_reg2 | classic_gameover_tips_reg1 | classic_gameover_tips_reg2 | infinity_gameover_tips_reg | initial_heart_reg | initial_time_reg;
 endmodule

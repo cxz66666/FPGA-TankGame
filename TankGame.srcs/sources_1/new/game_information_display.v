@@ -24,6 +24,7 @@ module game_information_display(
            input clk,
            input enable_game_classic,
            input enable_game_infinity,
+
            input [ 7: 0 ] score_classic,
            input [ 4: 0 ] timer,
            input [ 10: 0 ] vgaH,

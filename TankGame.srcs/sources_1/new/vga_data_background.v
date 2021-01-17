@@ -92,7 +92,7 @@ startpic_450_200 u_start_pic(
 
 always@( posedge clk ) begin
     if ( !sw_mode_sel ) begin
-        if ( vgaH >= 229 && vgaH <= 233 && vgaV >= 233 && vgaV <= 237 ) begin
+        if ( vgaH >= 223 && vgaH <= 233 && vgaV >= 227 && vgaV <= 237 ) begin
             VGA_data_cursor <= 12'h0F0;
         end
         else begin
@@ -100,7 +100,7 @@ always@( posedge clk ) begin
         end
     end
     else begin
-        if ( vgaH >= 229 && vgaH <= 233 && vgaV >= 252 && vgaV <= 256 ) begin
+        if ( vgaH >= 223 && vgaH <= 233 && vgaV >= 246 && vgaV <= 256 ) begin
             VGA_data_cursor <= 12'h0F0;
         end
         else begin

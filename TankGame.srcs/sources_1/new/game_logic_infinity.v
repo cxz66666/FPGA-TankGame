@@ -27,6 +27,7 @@ module game_logic_infinity(
            input enable_game_infinity,
            input mytank1_state,
            input mytank2_state,
+           input [ 3: 0 ] initial_num,
            input [ 3: 0 ] scorea1,
            input [ 3: 0 ] scorea2,
            input [ 3: 0 ] scoreb1,
@@ -45,7 +46,7 @@ module game_logic_infinity(
            output reg gameover_infinity,
 
            output wire [ 15: 0 ] led_infinity,
-           output reg [ 7: 0 ] score_infinity,                        //[7:4] is player2 ,[3:0] is player1
+           output reg [ 7: 0 ] score_infinity,                                  //[7:4] is player2 ,[3:0] is player1
            output reg timeup
        );
 
@@ -60,7 +61,7 @@ reg item_addtime_last;
 initial begin
     gameover_infinity <= 0;
     cnt <= 0;
-    timer <= 16;
+    timer <= 0;
     score_infinity <= 0;
     score1 <= 0;
     score2 <= 0;
@@ -121,7 +122,7 @@ always @( posedge clk ) begin
     if ( !enable_game_infinity ) begin
         gameover_infinity <= 0;
         cnt <= 0;
-        timer <= 16;
+        timer <= initial_num;
         if ( btn_return ) begin
             score1 <= 0;
             score2 <= 0;
@@ -136,13 +137,13 @@ always @( posedge clk ) begin
 
     else begin
         if ( timer == 0 || btn_stop || ( | HP1_value == 0 ) || ( | HP2_value == 0 ) ) begin
-            timer <= 16;
+            timer <= initial_num;
             gameover_infinity <= 1;
             timeup <= 1'b1;
         end
         else begin
             if ( score1 < scorea1 + scoreb1 + scorec1 + scored1 ) begin
-                if ( add_flag == 0 && timer > 0 && timer < 16 ) begin
+                if ( add_flag == 0 && timer > 0 && timer < initial_num ) begin
                     timer <= timer + 3;
                     cnt <= 0;
                     add_flag = 1;
@@ -152,7 +153,7 @@ always @( posedge clk ) begin
                 add_flag = 0;
             end
             if ( score2 < scorea2 + scoreb2 + scorec2 + scored2 ) begin
-                if ( add_flag == 0 && timer > 0 && timer < 16 ) begin
+                if ( add_flag == 0 && timer > 0 && timer < initial_num ) begin
                     timer <= timer + 3;
                     cnt <= 0;
                     add_flag = 1;
@@ -166,12 +167,12 @@ always @( posedge clk ) begin
             score2 <= scorea2 + scoreb2 + scorec2 + scored2;
 
             if ( item_addtime == 1 ) begin
-                if ( item_flag == 0 && timer > 0 && timer < 16 ) begin
+                if ( item_flag == 0 && timer > 0 && timer < initial_num ) begin
                     begin
-                        if ( timer == 15 ) begin
+                        if ( timer == initial_num - 1 ) begin
                             timer <= timer + 1;
                         end
-                        else if ( timer == 14 ) begin
+                        else if ( timer == initial_num - 2 ) begin
                             timer <= timer + 2;
                         end
                         else begin
@@ -197,7 +198,7 @@ always @( posedge clk ) begin
             end
 
             if ( item_addtime && ~item_addtime_last ) begin
-                timer <= timer + 10;
+                timer <= 4'b1111;
             end
             item_addtime_last <= item_addtime;
         end

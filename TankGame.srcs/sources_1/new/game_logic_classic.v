@@ -28,6 +28,7 @@ module game_logic_classic(
            input enable_game_classic,
            input mytank1_state,
            input mytank2_state,
+           input [ 3: 0 ] initial_num,
            input [ 3: 0 ] scorea1,
            input [ 3: 0 ] scorea2,
            input [ 3: 0 ] scoreb1,
@@ -44,7 +45,7 @@ module game_logic_classic(
 
            output reg gameover_classic,
            output wire [ 15: 0 ] led_classic,
-           output reg [ 7: 0 ] score_classic,                   //[7:4] is player2 ,[3:0] is player1
+           output reg [ 7: 0 ] score_classic,                     //[7:4] is player2 ,[3:0] is player1
            output reg [ 1: 0 ] winner
        );
 reg [ 3: 0 ] score1;
@@ -75,8 +76,8 @@ always @( posedge clk ) begin
         HP2_value <= HP2_value;
     end
     if ( enable_game_classic == 1'b0 ) begin
-        HP1_value <= 4;
-        HP2_value <= 4;
+        HP1_value <= initial_num;
+        HP2_value <= initial_num;
     end
     if ( item_addHP && ~item_addHP_last ) begin
         if ( which_player == 0 ) begin

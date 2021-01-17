@@ -24,7 +24,7 @@ module enermy_control(
            input clk_8Hz,
            input clk_2Hz,
            input clk_10ms,
-           input [ 1: 0 ] flag,                                  //00 01 10 11 four tanks
+           input [ 1: 0 ] flag,                                     //00 01 10 11 four tanks
            input [ 10: 0 ] player1_H,
            input [ 10: 0 ] player1_V,
            input [ 10: 0 ] player2_H,
@@ -78,8 +78,8 @@ assign enermy_moving = enermy_tank_en;
 
 initial begin
     enermy_fire <= 1'b0;
-    counter_num <= flag;
-    rand <= flag[ 0 ];
+    counter_num <= 0;
+    rand <= 0;
     Continue <= 0;
     Continue_num <= 0;
     enermy_fire_tmp <= 0;
